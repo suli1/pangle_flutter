@@ -1,26 +1,100 @@
 group 'io.github.nullptrx.pangleflutter'
 version '1.3.0'
 
+//msdk
+def M_SDK_VERSION = "2.9.2"
+def M_SDK_VERSION_FIX = ".0"
+//pangle
+def PANGLE_SDK_VERSION = "3.9.0.5"
+//gdt
+def GDT_SDK_VERSION = "4.391.1261"
+def GDT_ADAPTER_VERSION = ".1"
+//ks
+def KS_SDK_VERSION = "3.3.13"
+def KS_ADAPTER_VERSION = ".1"
+//baidu
+def BAIDU_SDK_VERSION = "9.14"
+def BAIDU_ADAPTER_VERSION = ".2"
+//mintegral
+def MINTEGRAL_SDK_VERSION = "15.6.17"
+def MINTEGRAL_ADAPTER_VERSION = ".1"
+//admob
+def ADMOB_SDK_VERSION = "17.2.0"
+def ADMOB_ADAPTER_VERSION = ".8"
+//unity
+def UNITY_SDK_VERSION = "3.7.5"
+def UNITY_ADAPTER_VERSION = ".1"
+//sigmob
+def SIGMOB_SDK_VERSION = "3.3.1"
+def SIGMOB_ADAPTER_VERSION = ".1"
+//klevin
+def KLEVIN_SDK_VERSION = "2.0.0.23"
+def KLEVIN_ADAPTER_VERSION = ".1"
+
+def getCurrentProjectDir() {
+    String result = ""
+    rootProject.allprojects { project ->
+        if (project.properties.get("identityPath").toString() == ":pangle_flutter") {
+            result = project.properties.get("projectDir").toString()
+        }
+    }
+    return result
+}
+
+
 buildscript {
     ext.kotlin_version = '1.5.21'
     repositories {
         google()
         mavenCentral()
+        jcenter() {
+            url 'https://maven.aliyun.com/repository/jcenter'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+        }
+        maven {
+            url "https://s3.amazonaws.com/moat-sdk-builds"
+        }
+
+        //GroMore SDK依赖
+        maven {
+            url "https://artifact.bytedance.com/repository/pangle"
+        }
+
+        //mintegral sdk依赖   引入mintegral sdk需要添加此maven
+        maven {
+            url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_support/"
+        }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'com.android.tools.build:gradle:4.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 rootProject.allprojects {
+    def dir = getCurrentProjectDir()
     repositories {
         google()
         mavenCentral()
-        // maven { url 'http://localhost:8081/repository/m2/' }
-        // maven { url 'https://raw.githubusercontent.com/nullptrX/repo/master/m2' }
-        maven { url 'https://cdn.jsdelivr.net/gh/nullptrX/repo/m2/' }
+        maven {
+            url "https://s3.amazonaws.com/moat-sdk-builds"
+        }
+
+        //GroMore SDK依赖
+        maven {
+            url "https://artifact.bytedance.com/repository/pangle"
+        }
+
+        //mintegral sdk依赖   引入mintegral sdk需要添加此maven
+        maven {
+            url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_support/"
+        }
+        maven {
+            url "$dir/aar"
+        }
     }
 }
 
@@ -51,8 +125,15 @@ android {
                 break
         }
     }
+
+
+
     defaultConfig {
         minSdkVersion 16
+
+        ndk {
+            abiFilters "armeabi","armeabi-v7a", "arm64-v8a"//, "x86"
+        }
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -60,7 +141,15 @@ android {
 
     buildTypes {
         release {
-            consumerProguardFiles "proguard-rules.pro"
+            ndk {
+                abiFilters "armeabi","armeabi-v7a", "arm64-v8a"//, "x86"
+            }
+        }
+
+        debug{
+            ndk {
+                abiFilters "armeabi","armeabi-v7a", "arm64-v8a"//, "x86"
+            }
         }
     }
 
@@ -70,8 +159,68 @@ android {
 
 }
 
+
+
+
+//获取flutter的sdk路径
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+
+
 dependencies {
-    api 'io.github.nullptrx:pangle:3.9.0.0@aar'
+//    api 'io.github.nullptrx:pangle:3.9.0.0@aar'
     implementation 'androidx.appcompat:appcompat:+'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.baidu:sdk:9.14.0"
+    implementation "com.unityads:sdk:3.7.5"
+    implementation "com.openad:sdk:3.9.0"
+    implementation "com.klevin:sdk:2.0.0"
+    implementation "com.windad:sdk:3.3.1"
+    implementation "com.gdt:sdk:4.391.1261"
+    implementation 'com.google.code.gson:gson:2.8.8'
+    compileOnly files("$flutterRoot/bin/cache/artifacts/engine/android-arm/flutter.jar")
+    compileOnly 'androidx.annotation:annotation:1.1.0'
+
+    // 基本操作
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+    // 网络操作--有网络操作添加
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+
+    //GroMore_sdk
+    implementation "com.gromore.cn:gromore-sdk:${M_SDK_VERSION}${M_SDK_VERSION_FIX}"  //groMore sdk
+    implementation "com.gromore.cn:gromore-test-tools:${M_SDK_VERSION}${M_SDK_VERSION_FIX}"  //groMore 测试工具
+
+
+    //admob
+    implementation("com.google.android.gms:play-services-ads:${ADMOB_SDK_VERSION}") {
+        exclude group: 'com.android.support'
+    }
+
+    //GroMore_sdk adapter
+    implementation "com.gromore.cn:gdt-adapter:${GDT_SDK_VERSION}${GDT_ADAPTER_VERSION}"
+    implementation "com.gromore.cn:baidu-adapter:${BAIDU_SDK_VERSION}${BAIDU_ADAPTER_VERSION}"
+    implementation "com.gromore.cn:mintegral-adapter:${MINTEGRAL_SDK_VERSION}${MINTEGRAL_ADAPTER_VERSION}"
+    implementation "com.gromore.cn:admob-adapter:${ADMOB_SDK_VERSION}${ADMOB_ADAPTER_VERSION}"
+    implementation "com.gromore.cn:unity-adapter:${UNITY_SDK_VERSION}${UNITY_ADAPTER_VERSION}"
+    implementation "com.gromore.cn:sigmob-adapter:${SIGMOB_SDK_VERSION}${SIGMOB_ADAPTER_VERSION}"
+    implementation "com.gromore.cn:klevin-adapter:${KLEVIN_SDK_VERSION}${KLEVIN_ADAPTER_VERSION}"
+
+    //mtg
+    implementation("com.mbridge.msdk.support:videojs:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:mbjscommon:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:playercommon:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:reward:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:videocommon:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:chinasame:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:interstitialvideo:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:mbnative:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:nativeex:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:mbnativeadvanced:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:interstitial:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:mbbanner:${MINTEGRAL_SDK_VERSION}")
+    implementation("com.mbridge.msdk.support:mbsplash:${MINTEGRAL_SDK_VERSION}")
 }

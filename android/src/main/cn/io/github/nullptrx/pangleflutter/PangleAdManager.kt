@@ -3,6 +3,7 @@ package io.github.nullptrx.pangleflutter
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageInfo
+import com.bytedance.msdk.api.nativeAd.TTNativeAd
 import com.bytedance.sdk.openadsdk.*
 import io.github.nullptrx.pangleflutter.common.PangleLoadingType
 import io.github.nullptrx.pangleflutter.common.PangleTitleBarTheme
@@ -19,6 +20,8 @@ class PangleAdManager {
     val shared = PangleAdManager()
   }
 
+  private val expressAdCollec1tionV2 =
+    Collections.synchronizedMap(mutableMapOf<String, TTNativeAd>())
 
   private val expressAdCollection =
     Collections.synchronizedMap(mutableMapOf<String, TTNativeExpressAd>())
@@ -57,13 +60,39 @@ class PangleAdManager {
     return data
   }
 
+  /**
+   * Express
+   */
+  fun setExpressAdV2(ttBannerAds: List<TTNativeAd>): List<String> {
+    val data = mutableListOf<String>()
+    ttBannerAds.forEach {
+      val key = it.hashCode().toString()
+      expressAdCollec1tionV2[key] = it
+      data.add(key)
+    }
+    return data
+  }
+
   fun getExpressAd(key: String): TTNativeExpressAd? {
     return expressAdCollection[key]
+  }
+
+  fun getExpressAdV2(key: String): TTNativeAd? {
+    return expressAdCollec1tionV2[key]
   }
 
   fun removeExpressAd(key: String): Boolean {
     if (expressAdCollection.containsKey(key)) {
       val it = expressAdCollection.remove(key)
+      it?.destroy()
+      return true
+    }
+    return false
+  }
+
+  fun removeExpressAdV2(key: String): Boolean {
+    if (expressAdCollec1tionV2.containsKey(key)) {
+      val it = expressAdCollec1tionV2.remove(key)
       it?.destroy()
       return true
     }

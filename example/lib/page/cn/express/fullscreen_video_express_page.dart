@@ -78,6 +78,7 @@ class _FullscreenVideoExpressPageState
         loadingType: PangleLoadingType.preload_only,
       ),
       android: AndroidFullscreenVideoConfig(
+        userId: "user123",
         slotId: kFullscreenVideoExpressId,
         loadingType: PangleLoadingType.preload_only,
       ),
@@ -99,6 +100,7 @@ class _FullscreenVideoExpressPageState
         loadingType: PangleLoadingType.normal,
       ),
       android: AndroidFullscreenVideoConfig(
+        userId: "user123",
         slotId: kFullscreenVideoExpressId,
         loadingType: PangleLoadingType.normal,
       ),
@@ -119,6 +121,7 @@ class _FullscreenVideoExpressPageState
         slotId: kFullscreenIdFull,
       ),
       android: AndroidFullscreenVideoConfig(
+        userId: "user123",
         slotId: kFullscreenIdFull,
       ),
     );

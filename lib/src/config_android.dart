@@ -330,6 +330,7 @@ class AndroidInterstitialConfig implements Config {
 
 class AndroidFullscreenVideoConfig implements Config {
   final String slotId;
+  final String userId;
   final bool isSupportDeepLink;
   final PangleOrientation orientation;
   final PangleLoadingType loadingType;
@@ -344,6 +345,7 @@ class AndroidFullscreenVideoConfig implements Config {
   /// [expressSize] optional. 模板宽高
   const AndroidFullscreenVideoConfig({
     required this.slotId,
+    required this.userId,
     this.isSupportDeepLink = true,
     this.orientation = PangleOrientation.veritical,
     this.loadingType = PangleLoadingType.normal,
@@ -359,6 +361,7 @@ class AndroidFullscreenVideoConfig implements Config {
     }
     return {
       'slotId': slotId,
+      'userId': userId,
       'isSupportDeepLink': isSupportDeepLink,
       'orientation': orientation.index,
       'loadingType': loadingType.index,

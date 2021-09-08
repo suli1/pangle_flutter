@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
-import com.bytedance.sdk.openadsdk.TTAdDislike.DislikeInteractionCallback
-import com.bytedance.sdk.openadsdk.TTNativeExpressAd
+import com.bytedance.msdk.api.TTDislikeCallback
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -21,7 +20,7 @@ class FlutterFeedView(
     messenger: BinaryMessenger,
     val id: Int,
     params: Map<String, Any?>
-) : PlatformView, MethodChannel.MethodCallHandler, TTNativeExpressAd.ExpressAdInteractionListener, DislikeInteractionCallback {
+) : PlatformView, MethodChannel.MethodCallHandler, TTDislikeCallback {
 
   private val methodChannel: MethodChannel = MethodChannel(messenger, "nullptrx.github.io/pangle_feedview_$id")
   private val container: FrameLayout
@@ -45,8 +44,8 @@ class FlutterFeedView(
   }
 
   private fun loadAd(id: String) {
-    val expressAd = PangleAdManager.shared.getExpressAd(id) ?: return
-    val expressAdView = expressAd.expressAdView
+    val expressAd = PangleAdManager.shared.getExpressAdV2(id) ?: return
+    val expressAdView = expressAd.expressView
     if (expressAdView.parent != null) {
       (expressAdView.parent as ViewGroup).removeView(expressAdView)
     }
@@ -56,8 +55,8 @@ class FlutterFeedView(
       gravity = Gravity.CENTER
     }
     container.addView(expressAdView, params)
-    expressAd.setCanInterruptVideoPlay(true)
-    expressAd.setExpressInteractionListener(this)
+//    expressAd.setCanInterruptVideoPlay(true)
+//    expressAd.setExpressInteractionListener(this)
     expressAd.setDislikeCallback(activity, this)
     expressAd.render()
 
@@ -66,30 +65,22 @@ class FlutterFeedView(
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
   }
 
-  override fun onAdClicked(view: View, type: Int) {
-    postMessage("onClick", mapOf("type" to type))
-  }
 
-  override fun onAdShow(view: View?, type: Int) {
+  override fun onShow() {
     postMessage("onShow")
   }
 
-  override fun onRenderSuccess(view: View, width: Float, height: Float) {
-    postMessage("onRenderSuccess")
-  }
 
-  override fun onRenderFail(view: View?, message: String?, code: Int) {
-    postMessage("onRenderFail", mapOf("message" to message, "code" to code))
-  }
-
-  override fun onShow() {
-  }
-
-  override fun onSelected(index: Int, option: String?, enforce: Boolean) {
-    postMessage("onDislike", mapOf("option" to option, "enforce" to enforce))
+  override fun onSelected(p0: Int, p1: String?) {
+    postMessage("onDislike", mapOf("option" to Int, "enforce" to p1))
   }
 
   override fun onCancel() {
+
+  }
+
+  override fun onRefuse() {
+    postMessage("onRenderSuccess")
   }
 
   private fun postMessage(method: String, arguments: Map<String, Any?> = mapOf()) {

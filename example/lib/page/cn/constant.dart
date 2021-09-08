@@ -20,20 +20,56 @@
  * SOFTWARE.
  */
 
-const kAppId = '5153502';
+// const kAppId = '5153502';
+//
+// const kSplashId = '887451293';
+//
+// const kRewardedVideoExpressId = '945940983';
+//
+// const kBannerExpressId600x260 = '945940906';
+//
+// const kFeedExpressId375x284 = '945940981';
+//
+// const kInterstitialExpressId3x2 = '945940989';
+// const kInterstitialExpressId1x1 = '945940988';
+//
+// // 新模板渲染插屏
+// const kFullscreenIdFull = '945999649';
+// // 全屏视频
+// const kFullscreenVideoExpressId = '945940986';
 
-const kSplashId = '887451293';
 
-const kRewardedVideoExpressId = '945940983';
+//官方 5001121
+//pangle_flutter 5153502
+const kAppId = '5001121';
 
-const kBannerExpressId600x260 = '945940906';
+//官方 887382965
+//pangle_flutter 887451293
+const kSplashId = '887382965';
 
-const kFeedExpressId375x284 = '945940981';
+//官方 横屏 945700410 官方竖屏945493668
+//pangle_flutter 945940983
+const kRewardedVideoExpressId = '945700410'; //奖励
 
-const kInterstitialExpressId3x2 = '945940989';
+//官方 945493677
+//pangle_flutter 945940906
+const kBannerExpressId600x260 = '945493677'; //Banner
+
+//官当 945493687
+//pangle_flutter 945940981
+const kFeedExpressId375x284 = '945493687'; //FEED信息流
+
+
+//官方945493679
+//pangle_flutter 945940989
+const kInterstitialExpressId3x2 = '945493679'; //插页
 const kInterstitialExpressId1x1 = '945940988';
 
+
+//官方 横屏945700424  竖屏945493674
+//pangle_flutter 945940986
 // 新模板渲染插屏
 const kFullscreenIdFull = '945999649';
 // 全屏视频
-const kFullscreenVideoExpressId = '945940986';
+const kFullscreenVideoExpressId = '945700424';
+
