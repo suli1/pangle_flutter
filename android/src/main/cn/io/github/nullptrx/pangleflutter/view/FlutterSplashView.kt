@@ -89,7 +89,7 @@ class FlutterSplashView(val context: Context, messenger: BinaryMessenger, val id
 
         override fun onAdLoadTimeout() {
         }
-      }, tolerateTimeout.toInt())
+      }, 100000)
     }
   }
 

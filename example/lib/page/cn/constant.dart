@@ -41,15 +41,18 @@
 
 //官方 5001121
 //pangle_flutter 5153502
+//去演 5163558
 const kAppId = '5001121';
 
 //官方 887382965
 //pangle_flutter 887451293
+//去演 887559227
 const kSplashId = '887382965';
 
 //官方 横屏 945700410 官方竖屏945493668
 //pangle_flutter 945940983
-const kRewardedVideoExpressId = '945700410'; //奖励
+//去演 946666099
+const kRewardedVideoExpressId = '946666099'; //奖励
 
 //官方 945493677
 //pangle_flutter 945940906

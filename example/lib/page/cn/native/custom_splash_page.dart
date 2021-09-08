@@ -76,7 +76,7 @@ class _CustomSplashPageState extends State<CustomSplashPage> {
               onTimeOver: _handleAdEnd,
               onClick: _handleAdEnd,
               onSkip: _handleAdEnd,
-              onError: (code, message) => _handleAdEnd(),
+              onError: (code, message) => _handleAdEnd(code: code,message: message),
             ),
           ),
           Container(
@@ -105,7 +105,7 @@ class _CustomSplashPageState extends State<CustomSplashPage> {
 
   _handleAdStart() {}
 
-  _handleAdEnd() {
+  _handleAdEnd({code,message}) {
     SystemChrome.setEnabledSystemUIOverlays([
       SystemUiOverlay.top,
       SystemUiOverlay.bottom,

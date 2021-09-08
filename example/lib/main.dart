@@ -60,8 +60,8 @@ class PangleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       ///
-      //home: CustomSplashPage(isRoot: true),
-      home: HomePage(),
+      home: CustomSplashPage(isRoot: true),
+      // home: HomePage(),
       theme: kThemeData,
     );
   }
