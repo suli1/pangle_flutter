@@ -3,6 +3,9 @@ package io.github.nullptrx.pangleflutter
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageInfo
+import android.widget.Toast
+import com.bytedance.msdk.api.AdError
+import com.bytedance.msdk.api.splash.TTSplashAdLoadCallback
 import com.bytedance.sdk.openadsdk.*
 import io.github.nullptrx.pangleflutter.common.PangleLoadingType
 import io.github.nullptrx.pangleflutter.common.PangleTitleBarTheme
@@ -129,6 +132,9 @@ class PangleAdManager {
       fullScreenVideoAdData[slotId] = data
     }
   }
+
+
+
 
 
   fun initialize(
@@ -271,6 +277,8 @@ class PangleAdManager {
     } else {
       ttAdNative?.loadSplashAd(adSlot, listener, (timeout * 1000).toInt())
     }
+
+
   }
 
   fun loadRewardVideoAd(

@@ -12,7 +12,8 @@
         android:label="Pangle Flutter"
         android:networkSecurityConfig="@xml/pangle_network_config"
         android:usesCleartextTraffic="true"
-        tools:replace="android:label">
+        tools:replace="android:label,android:networkSecurityConfig">
+
         <activity
             android:name="io.github.nullptrx.pangleflutterexample.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
