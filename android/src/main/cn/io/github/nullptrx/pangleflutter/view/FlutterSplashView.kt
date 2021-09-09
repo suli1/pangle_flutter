@@ -2,9 +2,8 @@ package io.github.nullptrx.pangleflutter.view
 
 import android.app.Activity
 import android.content.Context
-import android.view.Gravity
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import android.widget.Toast
 import com.bytedance.msdk.api.AdError
@@ -16,8 +15,6 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
-import io.github.nullptrx.pangleflutter.PangleAdManager
-import io.github.nullptrx.pangleflutter.PangleAdSlotManager
 import io.github.nullptrx.pangleflutter.common.TTSize
 import io.github.nullptrx.pangleflutter.util.asMap
 import io.github.nullptrx.pangleflutter.v2.TTAdSlotManager
@@ -78,7 +75,8 @@ class FlutterSplashView(val context: Context, messenger: BinaryMessenger, val id
       //step4:请求广告，调用开屏广告异步请求接口，对请求回调的广告作渲染处理
       mTTSplashAd.loadAd(adSlot,object : TTSplashAdLoadCallback {
         override fun onSplashAdLoadFail(adError: AdError) {
-          postMessage("onError", mapOf("message" to adError.message, "code" to adError.code))
+          postMessage("onError", mapOf("message" to adError.message + " adMessgaeDetail=" +  mTTSplashAd.adLoadInfoList, "code" to adError.code))
+
         }
 
         override fun onSplashAdLoadSuccess() {

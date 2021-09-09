@@ -152,11 +152,6 @@ android {
             }
         }
     }
-
-//    gradle.buildFinished { r ->
-//        System.err.println "pangle_flutter: $kEnv"
-//    }
-
 }
 
 
@@ -171,14 +166,13 @@ if (flutterRoot == null) {
 
 
 dependencies {
-//    api 'io.github.nullptrx:pangle:3.9.0.0@aar'
     implementation 'androidx.appcompat:appcompat:+'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.baidu:sdk:9.14.0"
-    implementation "com.unityads:sdk:3.7.5"
+    //implementation "com.baidu:sdk:9.14.0"
+    //implementation "com.unityads:sdk:3.7.5"
     implementation "com.openad:sdk:3.9.0"
-    implementation "com.klevin:sdk:2.0.0"
-    implementation "com.windad:sdk:3.3.1"
+    //implementation "com.klevin:sdk:2.0.0"
+    //implementation "com.windad:sdk:3.3.1"
     implementation "com.gdt:sdk:4.391.1261"
     implementation 'com.google.code.gson:gson:2.8.8'
     compileOnly files("$flutterRoot/bin/cache/artifacts/engine/android-arm/flutter.jar")
@@ -196,31 +190,31 @@ dependencies {
 
 
     //admob
-    implementation("com.google.android.gms:play-services-ads:${ADMOB_SDK_VERSION}") {
-        exclude group: 'com.android.support'
-    }
+    //implementation("com.google.android.gms:play-services-ads:${ADMOB_SDK_VERSION}") {
+    //    exclude group: 'com.android.support'
+    //}
 
     //GroMore_sdk adapter
     implementation "com.gromore.cn:gdt-adapter:${GDT_SDK_VERSION}${GDT_ADAPTER_VERSION}"
-    implementation "com.gromore.cn:baidu-adapter:${BAIDU_SDK_VERSION}${BAIDU_ADAPTER_VERSION}"
-    implementation "com.gromore.cn:mintegral-adapter:${MINTEGRAL_SDK_VERSION}${MINTEGRAL_ADAPTER_VERSION}"
-    implementation "com.gromore.cn:admob-adapter:${ADMOB_SDK_VERSION}${ADMOB_ADAPTER_VERSION}"
-    implementation "com.gromore.cn:unity-adapter:${UNITY_SDK_VERSION}${UNITY_ADAPTER_VERSION}"
-    implementation "com.gromore.cn:sigmob-adapter:${SIGMOB_SDK_VERSION}${SIGMOB_ADAPTER_VERSION}"
-    implementation "com.gromore.cn:klevin-adapter:${KLEVIN_SDK_VERSION}${KLEVIN_ADAPTER_VERSION}"
+    //implementation "com.gromore.cn:baidu-adapter:${BAIDU_SDK_VERSION}${BAIDU_ADAPTER_VERSION}"
+    //implementation "com.gromore.cn:mintegral-adapter:${MINTEGRAL_SDK_VERSION}${MINTEGRAL_ADAPTER_VERSION}"
+    //implementation "com.gromore.cn:admob-adapter:${ADMOB_SDK_VERSION}${ADMOB_ADAPTER_VERSION}"
+    //implementation "com.gromore.cn:unity-adapter:${UNITY_SDK_VERSION}${UNITY_ADAPTER_VERSION}"
+    //implementation "com.gromore.cn:sigmob-adapter:${SIGMOB_SDK_VERSION}${SIGMOB_ADAPTER_VERSION}"
+    //implementation "com.gromore.cn:klevin-adapter:${KLEVIN_SDK_VERSION}${KLEVIN_ADAPTER_VERSION}"
 
-    //mtg
-    implementation("com.mbridge.msdk.support:videojs:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:mbjscommon:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:playercommon:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:reward:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:videocommon:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:chinasame:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:interstitialvideo:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:mbnative:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:nativeex:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:mbnativeadvanced:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:interstitial:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:mbbanner:${MINTEGRAL_SDK_VERSION}")
-    implementation("com.mbridge.msdk.support:mbsplash:${MINTEGRAL_SDK_VERSION}")
+//mtg
+//    implementation("com.mbridge.msdk.support:videojs:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:mbjscommon:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:playercommon:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:reward:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:videocommon:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:chinasame:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:interstitialvideo:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:mbnative:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:nativeex:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:mbnativeadvanced:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:interstitial:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:mbbanner:${MINTEGRAL_SDK_VERSION}")
+//    implementation("com.mbridge.msdk.support:mbsplash:${MINTEGRAL_SDK_VERSION}")
 }

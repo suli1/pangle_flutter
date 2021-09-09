@@ -16,7 +16,6 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodCall;
 import io.github.nullptrx.pangleflutter.common.PangleOrientation;
 
-import static com.unity3d.services.core.properties.ClientProperties.getApplicationContext;
 
 public class TTAdSlotManager {
 

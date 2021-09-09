@@ -53,7 +53,7 @@ import io.github.nullptrx.pangleflutter.util.CodeUtil;
  */
 public class TTAdManagerHolder {
 
-    private static final String TAG = "TTTT";
+    private static final String TAG = "PagngleV2";
     private static boolean sInit;
 
     public static TTPrivacyConfig privacyConfig = new TTPrivacyConfig() {
@@ -185,14 +185,12 @@ public class TTAdManagerHolder {
         PackageInfo pkgInfo = null;
         try {
             pkgInfo = packageManager.getPackageInfo(applicationContext.getPackageName(), 0);
-
             //获取应用名
             String appName = pkgInfo.applicationInfo.loadLabel(packageManager).toString();
-
             return new TTAdConfig.Builder()
                     .appId(appId) //必填 ，不能为空   //5001121测试
                     .appName(appName) //必填，不能为空
-                    .openAdnTest(false)//开启第三方ADN测试时需要设置为true，会每次重新拉去最新配置，release 包情况下必须关闭.默认false
+                    .openAdnTest(true)//开启第三方ADN测试时需要设置为true，会每次重新拉去最新配置，release 包情况下必须关闭.默认false
                     .isPanglePaid(paid)//是否为费用户
                     .setPublisherDid(getAndroidId(context)) //用户自定义device_id
                     .openDebugLog(debug) //测试阶段打开，可以通过日志排查问题，上线时去除该调用
