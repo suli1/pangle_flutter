@@ -34,8 +34,14 @@ def KLEVIN_ADAPTER_VERSION = ".1"
 def getCurrentProjectDir() {
     String result = ""
     rootProject.allprojects { project ->
-        if (project.properties.get("identityPath").toString() == ":pangle_flutter") {
-            result = project.properties.get("projectDir").toString()
+
+        if (project.toString().contains ("pangle_flutter")) {
+            if (project.properties.get("identityPath").toString() == ":pangle_flutter") {
+                // 这里是flutter的约定, 插件的module名是插件名, :是gradle的约定. project前加:
+                //可能有朋友会纳闷这个本地的地址具体指向哪里，其实指向的是你插件项目存放的本地路径
+                //D:\flutter\.pub-cache\git\adhub_plugin-97145c094a41ad698e72896dbe0440842b180918\android\aar
+                result = project.properties.get("projectDir").toString()
+            }
         }
     }
     return result
@@ -45,6 +51,7 @@ def getCurrentProjectDir() {
 buildscript {
     ext.kotlin_version = '1.5.21'
     repositories {
+
         google()
         mavenCentral()
         jcenter() {
@@ -66,6 +73,8 @@ buildscript {
         maven {
             url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_support/"
         }
+
+
     }
 
     dependencies {
@@ -185,8 +194,12 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
 
     //GroMore_sdk
-    implementation "com.gromore.cn:gromore-sdk:${M_SDK_VERSION}${M_SDK_VERSION_FIX}"  //groMore sdk
-    implementation "com.gromore.cn:gromore-test-tools:${M_SDK_VERSION}${M_SDK_VERSION_FIX}"  //groMore 测试工具
+    implementation ("com.gromore.cn:gromore-sdk:2.9.2.0"){
+        exclude group:'com.umeng.umsdk'
+    }  //groMore sdk
+    implementation ("com.gromore.cn:gromore-test-tools:2.9.2.0"){
+        exclude group:'com.umeng.umsdk'
+    }  //groMore 测试工具
 
 
     //admob
@@ -195,7 +208,7 @@ dependencies {
     //}
 
     //GroMore_sdk adapter
-    implementation "com.gromore.cn:gdt-adapter:${GDT_SDK_VERSION}${GDT_ADAPTER_VERSION}"
+    implementation "com.gromore.cn:gdt-adapter:4.391.1261.1"
     //implementation "com.gromore.cn:baidu-adapter:${BAIDU_SDK_VERSION}${BAIDU_ADAPTER_VERSION}"
     //implementation "com.gromore.cn:mintegral-adapter:${MINTEGRAL_SDK_VERSION}${MINTEGRAL_ADAPTER_VERSION}"
     //implementation "com.gromore.cn:admob-adapter:${ADMOB_SDK_VERSION}${ADMOB_ADAPTER_VERSION}"
