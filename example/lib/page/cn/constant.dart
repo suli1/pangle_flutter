@@ -42,25 +42,25 @@
 //官方 5001121
 //pangle_flutter 5153502
 //去演 5163558
-const kAppId = '5001121';
+const kAppId = '5156773';
 
 //官方 887382965
 //pangle_flutter 887451293
 //去演 887559227
-const kSplashId = '887382965';
+const kSplashId = '887559222';
 
 //官方 横屏 945700410 官方竖屏945493668
 //pangle_flutter 945940983
 //去演 946666099
-const kRewardedVideoExpressId = '946666099'; //奖励
+const kRewardedVideoExpressId = '946666068'; //奖励
 
 //官方 945493677
 //pangle_flutter 945940906
-const kBannerExpressId600x260 = '945493677'; //Banner
+const kBannerExpressId600x260 = '946666150'; //Banner
 
 //官当 945493687
 //pangle_flutter 945940981
-const kFeedExpressId375x284 = '945493687'; //FEED信息流
+const kFeedExpressId375x284 = '946666153'; //FEED信息流
 
 
 //官方945493679
