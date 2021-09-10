@@ -52,7 +52,7 @@ const kSplashId = '887382965';
 //官方 横屏 945700410 官方竖屏945493668
 //pangle_flutter 945940983
 //去演 946666099
-const kRewardedVideoExpressId = '946666099'; //奖励
+const kRewardedVideoExpressId = '945700410'; //奖励
 
 //官方 945493677
 //pangle_flutter 945940906

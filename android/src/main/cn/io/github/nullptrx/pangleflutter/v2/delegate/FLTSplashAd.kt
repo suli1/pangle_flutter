@@ -8,7 +8,6 @@ import androidx.fragment.app.FragmentActivity
 import com.bytedance.msdk.api.AdError
 import com.bytedance.msdk.api.splash.TTSplashAd
 import com.bytedance.msdk.api.splash.TTSplashAdLoadCallback
-import com.bytedance.sdk.openadsdk.TTAdNative
 import io.github.nullptrx.pangleflutter.common.kBlock
 import io.github.nullptrx.pangleflutter.dialog.NativeSplashDialog
 import io.github.nullptrx.pangleflutter.dialog.SupportSplashDialog
@@ -43,7 +42,6 @@ internal class FLTSplashAdV2(
     }
 
     override fun onSplashAdLoadFail(p0: AdError?) {
-        Toast.makeText(activity, "失败", Toast.LENGTH_LONG).show();
         handleSplashEnd()
         invoke(p0!!.code, p0.message)
     }
@@ -54,7 +52,6 @@ internal class FLTSplashAdV2(
     }
 
     override fun onAdLoadTimeout() {
-        Toast.makeText(activity, "超时", Toast.LENGTH_LONG).show();
         handleSplashEnd()
         invoke(-1, "timeout")
     }

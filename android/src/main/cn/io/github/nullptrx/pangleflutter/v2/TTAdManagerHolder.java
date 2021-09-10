@@ -45,6 +45,7 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel;
 import io.github.nullptrx.pangleflutter.PangleAdManager;
 import io.github.nullptrx.pangleflutter.bean.FeedBeanWrap;
+import io.github.nullptrx.pangleflutter.common.PangleLoadingType;
 import io.github.nullptrx.pangleflutter.util.CodeUtil;
 
 
@@ -77,8 +78,8 @@ public class TTAdManagerHolder {
      * @param context 上下文
      * @param map     桥接参数
      */
-    public static void init(Context context, Map<String, Object> map) {
-        doInit(context, map);
+    public static void init(Context context, Map<String, Object> map,MethodChannel.Result result) {
+        doInit(context, map,result);
     }
 
     public static void initUnitySdkBanner(Activity activity) {
@@ -87,9 +88,21 @@ public class TTAdManagerHolder {
 
 
     //step1:接入网盟广告sdk的初始化操作，详情见接入文档和穿山甲平台说明
-    private static void doInit(Context context, Map<String, Object> map) {
+    private static void doInit(Context context, Map<String, Object> map,MethodChannel.Result result) {
         if (!sInit) {
+            TTAdConfig ttAdConfig = buildConfig(context, map);
+            if(ttAdConfig == null){
+                HashMap<String, Object> resultMap = new HashMap<>();
+                resultMap.put("code",-1);
+                resultMap.put("message","init error");
+                result.success(resultMap);
+                return;
+            }
             TTMediationAdSdk.initialize(context, buildConfig(context, map));
+            HashMap<String, Object> resultMap = new HashMap<>();
+            resultMap.put("code",0);
+            resultMap.put("message","init success");
+            result.success(resultMap);
             sInit = true;
         }
     }
@@ -100,7 +113,7 @@ public class TTAdManagerHolder {
             appId = (String) map.get("appId");
         }
 
-        boolean debug = true;
+        boolean debug = false;
         if (map.get("debug") != null) {
             debug = (boolean) map.get("debug");
         }
@@ -174,11 +187,6 @@ public class TTAdManagerHolder {
             ttLocation = (boolean) map.get("ttLocation");
         }
 
-
-        System.out.printf("------------------------------------------------");
-        System.out.println(appId);
-        System.out.printf("------------------------------------------------");
-
         //强烈建议在应用对应的Application#onCreate()方法中调用，避免出现content为null的异常
         PackageManager packageManager = context.getPackageManager();
         Context applicationContext = context.getApplicationContext();
@@ -190,18 +198,16 @@ public class TTAdManagerHolder {
             return new TTAdConfig.Builder()
                     .appId(appId) //必填 ，不能为空   //5001121测试
                     .appName(appName) //必填，不能为空
-                    .openAdnTest(true)//开启第三方ADN测试时需要设置为true，会每次重新拉去最新配置，release 包情况下必须关闭.默认false
+                    .openAdnTest(debug)//开启第三方ADN测试时需要设置为true，会每次重新拉去最新配置，release 包情况下必须关闭.默认false
                     .isPanglePaid(paid)//是否为费用户
                     .setPublisherDid(getAndroidId(context)) //用户自定义device_id
                     .openDebugLog(debug) //测试阶段打开，可以通过日志排查问题，上线时去除该调用
                     .usePangleTextureView(true) //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView
                     .setPangleTitleBarTheme(TTAdConstant.TITLE_BAR_THEME_DARK)
-                    .allowPangleShowNotify(true) //是否允许sdk展示通知栏提示
-                    .allowPangleShowPageWhenScreenLock(true) //是否在锁屏场景支持展示广告落地页
+                    .allowPangleShowNotify(allowShowNotify) //是否允许sdk展示通知栏提示
+                    .allowPangleShowPageWhenScreenLock(allowShowPageWhenScreenLock) //是否在锁屏场景支持展示广告落地页
                     .setPangleDirectDownloadNetworkType(TTAdConstant.NETWORK_STATE_WIFI, TTAdConstant.NETWORK_STATE_3G) //允许直接下载的网络状态集合
                     .needPangleClearTaskReset()//特殊机型过滤，部分机型出现包解析失败问题（大部分是三星）。参数取android.os.Build.MODEL
-//                .setUserInfoForSegment(userInfo) // 设置流量分组的信息
-//                .customController(new TTCustomController() {}) // 该函数已经废弃，请不要使用。使用setPrivacyConfig进行权限设置
                     .setPrivacyConfig(privacyConfig)
                     .build();
         } catch (PackageManager.NameNotFoundException e) {
@@ -228,9 +234,7 @@ public class TTAdManagerHolder {
 
 
 
-
-
-    public static void loadRewardVideoAdV2(@NotNull TTRewardAd mttRewardAd, @Nullable AdSlot rewardAdSlot, Activity activity,final MethodChannel.Result result) {
+    public static void loadRewardVideoAdV2(@NotNull TTRewardAd mttRewardAd, @Nullable AdSlot rewardAdSlot, final Activity activity, final MethodChannel.Result result) {
 
         final boolean[] verify = {false};
 
@@ -251,12 +255,7 @@ public class TTAdManagerHolder {
              */
             @Override
             public void onRewardedAdShowFail(AdError adError) {
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("code", adError.code);
-                map.put("message",adError.message);
-                map.put("verify",false);
-                result.success(map);
-
+             
             }
 
             /**
@@ -272,9 +271,8 @@ public class TTAdManagerHolder {
              * 广告关闭的回调
              */
             public void onRewardedAdClosed() {
-
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("code", -1);
+                map.put("code",0);
                 map.put("message", "success");
                 map.put("verify",true);
                 result.success(map);
@@ -292,11 +290,11 @@ public class TTAdManagerHolder {
              * 1、视频播放失败的回调
              */
             public void onVideoError() {
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("code",0);
-                map.put("message", "error");
-                map.put("verify",false);
-                result.success(map);
+//                HashMap<String, Object> map = new HashMap<>();
+//                map.put("code",-1);
+//                map.put("message", "error");
+//                map.put("verify",false);
+//                result.success(map);
             }
 
             /**
@@ -392,72 +390,101 @@ public class TTAdManagerHolder {
         });
     }
 
-    public static void loadFullVideoAdV2(@NotNull final TTFullVideoAd mTTFullVideoAd, @Nullable AdSlot fullVideoAdSlot,final  Activity activity) {
-        mTTFullVideoAd.loadFullAd(fullVideoAdSlot, new TTFullVideoAdLoadCallback() {
+    public static void loadFullVideoAdV2(@NotNull final TTFullVideoAd mTTFullVideoAd, @Nullable AdSlot fullVideoAdSlot, PangleLoadingType loadingType, final  Activity activity,final MethodChannel.Result result) {
+        if (PangleLoadingType.preload_only == loadingType ) {
+            //只是预加载
+            mTTFullVideoAd.loadFullAd(fullVideoAdSlot, new TTFullVideoAdLoadCallback() {
 
-            @Override
-            public void onFullVideoLoadFail(AdError adError) {
-            }
+                @Override
+                public void onFullVideoLoadFail(AdError adError) {
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("code",-1);
+                    map.put("message",adError.message + " pro");
+                    result.success(map);
+                }
 
-            @Override
-            public void onFullVideoAdLoad() {
-                mTTFullVideoAd.showFullAd(activity, mTTFullVideoAdListener);
-            }
+                @Override
+                public void onFullVideoAdLoad() {
 
-            @Override
-            public void onFullVideoCached() {
-                mTTFullVideoAd.showFullAd(activity, mTTFullVideoAdListener);
-            }
-        });
+                }
+
+                @Override
+                public void onFullVideoCached() {
+
+                }
+            });
+        }else{
+            mTTFullVideoAd.loadFullAd(fullVideoAdSlot, new TTFullVideoAdLoadCallback() {
+                @Override
+                public void onFullVideoLoadFail(AdError adError) {
+
+                }
+
+                @Override
+                public void onFullVideoAdLoad() {
+                    mTTFullVideoAd.showFullAd(activity, listenerFull(result));
+                }
+
+                @Override
+                public void onFullVideoCached() {
+                    mTTFullVideoAd.showFullAd(activity,  listenerFull(result));
+                }
+            });
+        }
     }
 
-    private static final TTFullVideoAdListener mTTFullVideoAdListener = new TTFullVideoAdListener() {
+    public static TTFullVideoAdListener listenerFull(final MethodChannel.Result result){
 
-        @Override
-        public void onFullVideoAdShow() {
-            Log.d(TAG, "onFullVideoAdShow");
-        }
+        final int[] code = {0};
+        final String[] message = {"success"};
 
-        /**
-         * show失败回调。如果show时发现无可用广告（比如广告过期或者isReady=false），会触发该回调。
-         * 开发者应该结合自己的广告加载、展示流程，在该回调里进行重新加载。
-         * @param adError showFail的具体原因
-         */
-        @Override
-        public void onFullVideoAdShowFail(AdError adError) {
-            Log.d(TAG, "onFullVideoAdShowFail");
+        return new TTFullVideoAdListener() {
 
-            // 开发者应该结合自己的广告加载、展示流程，在该回调里进行重新加载
-        }
+            @Override
+            public void onFullVideoAdShow() {
 
-        @Override
-        public void onFullVideoAdClick() {
-            Log.d(TAG, "onFullVideoAdClick");
-        }
+            }
 
-        @Override
-        public void onFullVideoAdClosed() {
-            Log.d(TAG, "onFullVideoAdClosed");
-        }
+            /**
+             * show失败回调。如果show时发现无可用广告（比如广告过期或者isReady=false），会触发该回调。
+             * 开发者应该结合自己的广告加载、展示流程，在该回调里进行重新加载。
+             * @param adError showFail的具体原因
+             */
+            @Override
+            public void onFullVideoAdShowFail(AdError adError) {
+                code[0] = adError.code;
+                message[0] = adError.message;
+            }
 
-        @Override
-        public void onVideoComplete() {
-            Log.d(TAG, "onVideoComplete");
-        }
+            @Override
+            public void onFullVideoAdClick() {
+            }
 
-        /**
-         * 1、视频播放失败的回调 - Mintegral GDT Admob广告不存在该回调；
-         */
-        @Override
-        public void onVideoError() {
-            Log.d(TAG, "onVideoError");
-        }
+            @Override
+            public void onFullVideoAdClosed() {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("code",code[0]);
+                map.put("message",message[0]);
+                result.success(map);
+            }
 
-        @Override
-        public void onSkippedVideo() {
-            Log.d(TAG, "onSkippedVideo");
-        }
-    };
+            @Override
+            public void onVideoComplete() {
+            }
+
+            /**
+             * 1、视频播放失败的回调 - Mintegral GDT Admob广告不存在该回调；
+             */
+            @Override
+            public void onVideoError() {
+
+            }
+
+            @Override
+            public void onSkippedVideo() {
+            }
+        };
+    }
 
     public static void loadFeedListAdV2(@NotNull final TTUnifiedNativeAd mTTAdNative, @NotNull AdSlot adSlot, Activity activity,final MethodChannel.Result result) {
 
@@ -471,26 +498,13 @@ public class TTAdManagerHolder {
                     result.success(map);
                     return;
                 }
-
                 ArrayList<String> datas = (ArrayList<String>) PangleAdManager.Companion.getShared().setExpressAdV2(ads);
-                for (TTNativeAd ttNativeAd : ads) {
-
-//                    Log.e(AppConst.TAG, "adNetworkPlatformId: " + ttNativeAd.getAdNetworkPlatformId()); //获取展示广告对应的adn的值  具体值见NetworkPlatformConst类 -3: 无权限   -2: 暂无数据
-//                    Log.e(AppConst.TAG, "adNetworkRitId：" + ttNativeAd.getAdNetworkRitId()); //获取展示广告对应的代码位 具体值见NetworkPlatformConst类 "-3": 无权限   "-2"
-//                    Log.e(AppConst.TAG,  "preEcpm: " + ttNativeAd.getPreEcpm()); //获取展示广告预估ecpm价格，单位是分 具体值见NetworkPlatformConst类 "-3": 无权限   "-2": 暂无数据 "-1":平台未有填写的预估ecpm价格
-                }
                 //广告加载成功 ads
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("code",0);
                 map.put("count",ads.size());
                 map.put("data",datas);
-
                 result.success(map);
-
-                // 获取本次waterfall加载中，加载失败adn的错误信息。
-                if (mTTAdNative != null) {
-                    Log.d(TAG, "feed adLoadInfos: " + mTTAdNative.getAdLoadInfoList().toString());
-                }
             }
 
             @Override

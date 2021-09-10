@@ -71,6 +71,7 @@ class _BannerExpressPageState extends State<BannerExpressPage> {
               expressSize: PangleExpressSize(width: 600, height: 260),
             ),
             android: AndroidBannerConfig(
+              isAllowShowCloseBtn: false,
               slotId: kBannerExpressId600x260,
               expressSize: PangleExpressSize(width: 600, height: 260),
             ),
