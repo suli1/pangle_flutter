@@ -13,8 +13,6 @@ object PangleAdSlotManager {
     slotId: String,
     imgSize: TTSize,
     isSupportDeepLink: Boolean,
-    splashButtonType: Int,
-    downloadType: Int
   ): AdSlot {
 
     return AdSlot.Builder().apply {
@@ -24,8 +22,8 @@ object PangleAdSlotManager {
         setImageAcceptedSize(width.dp, height.dp)
       } // setSplashButtonType(TTAdConstant.SPLASH_BUTTON_TYPE_FULL_SCREEN)
       // setDownloadType(TTAdConstant.DOWNLOAD_TYPE_NO_POPUP)
-      setSplashButtonType(splashButtonType)
-      setDownloadType(downloadType)
+//      setSplashButtonType(splashButtonType)
+//      setDownloadType(downloadType)
     }.build()
   }
 
@@ -38,7 +36,7 @@ object PangleAdSlotManager {
     isVertical: Boolean,
     isSupportDeepLink: Boolean,
     extra: String?,
-    downloadType: Int
+//    downloadType: Int
   ): AdSlot {
 
     return AdSlot.Builder().apply { // 必选参数 设置您的CodeId
@@ -61,13 +59,15 @@ object PangleAdSlotManager {
       extra?.also {
         setMediaExtra(it)
       }
-      setDownloadType(downloadType)
+//      setDownloadType(downloadType)
     }.build()
   }
 
-
   fun getBannerAdSlot(
-    slotId: String, expressSize: TTSizeF, count: Int, isSupportDeepLink: Boolean, downloadType: Int
+    slotId: String,
+    expressSize: TTSizeF,
+    count: Int,
+    isSupportDeepLink: Boolean
   ): AdSlot {
 
     return AdSlot.Builder().apply {
@@ -76,12 +76,16 @@ object PangleAdSlotManager {
       setExpressViewAcceptedSize(expressSize.width, expressSize.height)
       setAdCount(count)
       setSupportDeepLink(isSupportDeepLink)
-      setDownloadType(downloadType)
+//      setDownloadType(downloadType)
     }.build()
   }
 
   fun getFeedAdSlot(
-    slotId: String, expressSize: TTSizeF, count: Int, isSupportDeepLink: Boolean, downloadType: Int
+    slotId: String,
+    expressSize: TTSizeF,
+    count: Int,
+    isSupportDeepLink: Boolean,
+//    downloadType: Int,
   ): AdSlot {
     return AdSlot.Builder().apply {
       setCodeId(slotId)
@@ -89,12 +93,15 @@ object PangleAdSlotManager {
       // setNativeAdType()
       setAdCount(count)
       setExpressViewAcceptedSize(expressSize.width, expressSize.height)
-      setDownloadType(downloadType)
+//      setDownloadType(downloadType)
     }.build()
   }
 
   fun getInterstitialAdSlot(
-    slotId: String, expressSize: TTSizeF, isSupportDeepLink: Boolean, downloadType: Int
+    slotId: String,
+    expressSize: TTSizeF,
+    isSupportDeepLink: Boolean,
+//    downloadType: Int
   ): AdSlot {
 
     return AdSlot.Builder().apply {
@@ -102,17 +109,16 @@ object PangleAdSlotManager {
       setExpressViewAcceptedSize(expressSize.width, expressSize.height)
       setSupportDeepLink(isSupportDeepLink) //请求原生广告时候，请务必调用该方法，设置参数为TYPE_BANNER或TYPE_INTERACTION_AD
       setAdCount(1)
-      setDownloadType(downloadType)
+//      setDownloadType(downloadType)
     }.build()
   }
-
 
   fun getFullScreenVideoAdSlot(
     slotId: String,
     expressSize: TTSizeF,
     orientation: PangleOrientation,
     isSupportDeepLink: Boolean,
-    downloadType: Int
+//    downloadType: Int
   ): AdSlot {
 
     return AdSlot.Builder().apply { // 必选参数 设置您的CodeId
@@ -122,12 +128,16 @@ object PangleAdSlotManager {
       setSupportDeepLink(isSupportDeepLink) //设置期望视频播放的方向，为TTAdConstant.HORIZONTAL或TTAdConstant.VERTICAL
       //      setOrientation(if (isVertical) TTAdConstant.VERTICAL else TTAdConstant.HORIZONTAL)
       setOrientation(orientation.ordinal) //激励视频奖励透传参数，字符串，如果用json对象，必须使用序列化为String类型,可为空
-      setDownloadType(downloadType)
+//      setDownloadType(downloadType)
     }.build()
   }
 
   fun getNativeBannerAdSlot(
-    slotId: String, size: TTSize, count: Int, isSupportDeepLink: Boolean, downloadType: Int
+    slotId: String,
+    size: TTSize,
+    count: Int,
+    isSupportDeepLink: Boolean,
+//    downloadType: Int,
   ): AdSlot {
 
     return AdSlot.Builder().apply {
@@ -135,7 +145,7 @@ object PangleAdSlotManager {
       setImageAcceptedSize(size.width, size.height)
       setAdCount(count)
       setSupportDeepLink(isSupportDeepLink)
-      setDownloadType(downloadType)
+//      setDownloadType(downloadType)
     }.build()
   }
 }

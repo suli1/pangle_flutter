@@ -28,14 +28,22 @@ class FLTInterstitialExpressAd(var target: Activity?, var result: (Any) -> Unit)
     invoke(code, message)
   }
 
-  override fun onShow() {
+  override fun onSelected(p0: Int, p1: String?) {
+    TODO("Not yet implemented")
   }
 
-  override fun onSelected(index: Int, selection: String?, p2: Boolean) {
-
-  }
+//  override fun onShow() {
+//  }
+//
+//  override fun onSelected(index: Int, selection: String?, p2: Boolean) {
+//
+//  }
 
   override fun onCancel() {
+  }
+
+  override fun onRefuse() {
+    TODO("Not yet implemented")
   }
 
   override fun onAdDismiss() {

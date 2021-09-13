@@ -43,10 +43,10 @@ class FlutterNativeBannerView(
       val expressArgs: Map<String, Double> = params["size"]?.asMap() ?: mapOf()
       val w: Int = expressArgs.getValue("width").toInt()
       val h: Int = expressArgs.getValue("height").toInt()
-      val downloadType = params["downloadType"] as Int? ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
+//      val downloadType = params["downloadType"] as Int? ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
       val size = TTSize(w, h)
       val adSlot =
-        PangleAdSlotManager.getNativeBannerAdSlot(slotId, size, 1, isSupportDeepLink, downloadType)
+        PangleAdSlotManager.getNativeBannerAdSlot(slotId, size, 1, isSupportDeepLink)
       PangleAdManager.shared.loadBannerAd(adSlot, this)
     }
   }
@@ -90,14 +90,22 @@ class FlutterNativeBannerView(
     postMessage("onShow")
   }
 
-  override fun onShow() {
+  override fun onSelected(p0: Int, p1: String?) {
+    TODO("Not yet implemented")
   }
 
-  override fun onSelected(index: Int, option: String?, enforce: Boolean) { //用户选择不喜欢原因后，移除广告展示
-    postMessage("onDislike", mapOf("option" to option, "enforce" to enforce))
-  }
+//  override fun onShow() {
+//  }
+//
+//  override fun onSelected(index: Int, option: String?, enforce: Boolean) { //用户选择不喜欢原因后，移除广告展示
+//    postMessage("onDislike", mapOf("option" to option, "enforce" to enforce))
+//  }
 
   override fun onCancel() {
+  }
+
+  override fun onRefuse() {
+    TODO("Not yet implemented")
   }
 
   private fun postMessage(method: String, arguments: Map<String, Any?> = mapOf()) {

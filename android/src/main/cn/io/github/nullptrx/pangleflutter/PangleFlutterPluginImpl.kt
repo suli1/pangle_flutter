@@ -161,11 +161,11 @@ open class PangleFlutterPluginImpl : FlutterPlugin, MethodCallHandler, ActivityA
         val hideSkipButton = call.argument<Boolean>("hideSkipButton")
         val isSupportDeepLink = call.argument<Boolean>("isSupportDeepLink") ?: true
         val imgSize = TTSize(1080, 1920)
-        val splashButtonType =
-          call.argument<Int>("splashButtonType") ?: TTAdConstant.SPLASH_BUTTON_TYPE_FULL_SCREEN
-        val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
+//        val splashButtonType =
+//          call.argument<Int>("splashButtonType") ?: TTAdConstant.SPLASH_BUTTON_TYPE_FULL_SCREEN
+//        val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
         val adSlot = PangleAdSlotManager.getSplashAdSlot(
-          slotId, imgSize, isSupportDeepLink, splashButtonType, downloadType
+          slotId, imgSize, isSupportDeepLink
         )
         pangle.loadSplashAd(adSlot, FLTSplashAd(hideSkipButton, activity) {
           result.success(it)
@@ -203,9 +203,9 @@ open class PangleFlutterPluginImpl : FlutterPlugin, MethodCallHandler, ActivityA
         val w: Float = expressArgs.getValue("width").toFloat()
         val h: Float = expressArgs.getValue("height").toFloat()
         val expressSize = TTSizeF(w, h)
-        val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
+//        val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
         val adSlot = PangleAdSlotManager.getBannerAdSlot(
-          slotId, expressSize, count, isSupportDeepLink, downloadType
+          slotId, expressSize, count, isSupportDeepLink
         )
         pangle.loadBanner2ExpressAd(adSlot) {
           result.success(it)
@@ -220,9 +220,9 @@ open class PangleFlutterPluginImpl : FlutterPlugin, MethodCallHandler, ActivityA
         val w: Float = expressArgs.getValue("width").toFloat()
         val h: Float = expressArgs.getValue("height").toFloat()
         val expressSize = TTSizeF(w, h)
-        val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
+//        val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
         val adSlot = PangleAdSlotManager.getFeedAdSlot(
-          slotId, expressSize, count, isSupportDeepLink, downloadType
+          slotId, expressSize, count, isSupportDeepLink
         )
         pangle.loadFeedExpressAd(adSlot) {
           result.success(it)
@@ -248,10 +248,10 @@ open class PangleFlutterPluginImpl : FlutterPlugin, MethodCallHandler, ActivityA
         val w: Float = expressArgs.getValue("width").toFloat()
         val h: Float = expressArgs.getValue("height").toFloat()
         val expressSize = TTSizeF(w, h)
-        val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
+//        val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
 
         val adSlot = PangleAdSlotManager.getInterstitialAdSlot(
-          slotId, expressSize, isSupportDeepLink, downloadType
+          slotId, expressSize, isSupportDeepLink
         )
         pangle.loadInteractionExpressAd(adSlot, FLTInterstitialExpressAd(activity) {
           result.success(it)
@@ -312,7 +312,7 @@ open class PangleFlutterPluginImpl : FlutterPlugin, MethodCallHandler, ActivityA
     val w: Float = expressArgs.getValue("width").toFloat()
     val h: Float = expressArgs.getValue("height").toFloat()
     val expressSize = TTSizeF(w, h)
-    val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
+//    val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
     val adSlot = PangleAdSlotManager.getRewardVideoAdSlot(
       slotId,
       expressSize,
@@ -322,7 +322,7 @@ open class PangleFlutterPluginImpl : FlutterPlugin, MethodCallHandler, ActivityA
       isVertical,
       isSupportDeepLink,
       extra,
-      downloadType
+//      downloadType
     )
 
     PangleAdManager.shared.loadRewardVideoAd(adSlot, activity, loadingType) {
@@ -343,9 +343,9 @@ open class PangleFlutterPluginImpl : FlutterPlugin, MethodCallHandler, ActivityA
     val w: Float = expressArgs.getValue("width").toFloat()
     val h: Float = expressArgs.getValue("height").toFloat()
     val expressSize = TTSizeF(w, h)
-    val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
+//    val downloadType = call.argument<Int>("downloadType") ?: TTAdConstant.DOWNLOAD_TYPE_NO_POPUP
     val adSlot = PangleAdSlotManager.getFullScreenVideoAdSlot(
-      slotId, expressSize, orientation, isSupportDeepLink, downloadType
+      slotId, expressSize, orientation, isSupportDeepLink
     )
 
     PangleAdManager.shared.loadFullscreenVideoAd(adSlot, activity, loadingType) {

@@ -37,11 +37,12 @@ class PangleAdManager {
   }
 
   fun getThemeStatus(): Int {
-    return ttAdManager?.themeStatus ?: -1
+//    return ttAdManager?.themeStatus ?: -1
+    return  -1;
   }
 
   fun setThemeStatus(theme: Int) {
-    ttAdManager?.themeStatus = theme
+//    ttAdManager?.themeStatus = theme
   }
 
   /**
@@ -79,10 +80,10 @@ class PangleAdManager {
     val data = rewardedVideoAdData[slotId] ?: mutableListOf()
     if (data.size > 0) {
       val ad = data.removeFirst()
-      // 3.8.0.6 新增过期时间
-      if (ad.expirationTimestamp < System.currentTimeMillis()) {
-        return false
-      }
+//      // 3.8.0.6 新增过期时间
+//      if (ad.expirationTimestamp < System.currentTimeMillis()) {
+//        return false
+//      }
       ad.setRewardAdInteractionListener(RewardAdInteractionImpl { obj ->
         result.invoke(obj)
       })
@@ -110,9 +111,9 @@ class PangleAdManager {
     if (data.size > 0) {
       val ad = data.removeFirst()
       // 3.8.0.6 新增过期时间
-      if (ad.expirationTimestamp < System.currentTimeMillis()) {
-        return false
-      }
+//      if (ad.expirationTimestamp < System.currentTimeMillis()) {
+//        return false
+//      }
       ad.setFullScreenVideoAdInteractionListener(FullScreenVideoAdInteractionImpl { obj ->
         result.invoke(obj)
       })
@@ -156,12 +157,12 @@ class PangleAdManager {
     val devImei: String? = args["devImei"] as String?
     val devOaid: String? = args["devOaid"] as String?
     val location = args["location"]?.asMap<String, Double>()
-    var ttLocation: TTLocation? = null
+//    var ttLocation: TTLocation? = null
     location?.also {
       try {
         val latitude = it["latitude"]!!
         val longitude = it["longitude"]!!
-        ttLocation = TTLocation(latitude, longitude)
+//        ttLocation = TTLocation(latitude, longitude)
       } catch (e: Exception) {
       }
     }
@@ -200,9 +201,9 @@ class PangleAdManager {
       allowShowPageWhenScreenLock?.also {
         allowShowPageWhenScreenLock(it)
       }
-      directDownloadNetworkType?.also {
-        directDownloadNetworkType(*it)
-      }
+//      directDownloadNetworkType?.also {
+//        directDownloadNetworkType(*it)
+//      }
       supportMultiProcess?.also {
         supportMultiProcess(it)
       }
@@ -213,37 +214,37 @@ class PangleAdManager {
 
 //      httpStack(OKHttpStack())
 
-      customController(object : TTCustomController() {
-        override fun isCanUseLocation(): Boolean {
-
-          return isCanUseLocation ?: true
-        }
-
-        override fun isCanUsePhoneState(): Boolean {
-          return isCanUsePhoneState ?: true
-        }
-
-        override fun isCanUseWriteExternal(): Boolean {
-          return isCanUseWriteExternal ?: true
-        }
-
-        override fun isCanUseWifiState(): Boolean {
-          return isCanUseWifiState ?: true
-        }
-
-        override fun getDevImei(): String? {
-          return devImei
-        }
-
-        override fun getTTLocation(): TTLocation? {
-          return ttLocation
-        }
-
-        // 修改后，返回String?
-        override fun getDevOaid(): String? {
-          return devOaid
-        }
-      })
+//      customController(object : TTCustomController() {
+//        override fun isCanUseLocation(): Boolean {
+//
+//          return isCanUseLocation ?: true
+//        }
+//
+//        override fun isCanUsePhoneState(): Boolean {
+//          return isCanUsePhoneState ?: true
+//        }
+//
+//        override fun isCanUseWriteExternal(): Boolean {
+//          return isCanUseWriteExternal ?: true
+//        }
+//
+//        override fun isCanUseWifiState(): Boolean {
+//          return isCanUseWifiState ?: true
+//        }
+//
+//        override fun getDevImei(): String? {
+//          return devImei
+//        }
+//
+//        override fun getTTLocation(): TTLocation? {
+//          return ttLocation
+//        }
+//
+//        // 修改后，返回String?
+//        override fun getDevOaid(): String? {
+//          return devOaid
+//        }
+//      })
 
     }.build()
 

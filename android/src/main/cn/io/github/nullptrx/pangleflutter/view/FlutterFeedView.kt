@@ -82,14 +82,22 @@ class FlutterFeedView(
     postMessage("onRenderFail", mapOf("message" to message, "code" to code))
   }
 
-  override fun onShow() {
+  override fun onSelected(p0: Int, p1: String?) {
+    TODO("Not yet implemented")
   }
 
-  override fun onSelected(index: Int, option: String?, enforce: Boolean) {
-    postMessage("onDislike", mapOf("option" to option, "enforce" to enforce))
-  }
+//  override fun onShow() {
+//  }
+//
+//  override fun onSelected(index: Int, option: String?, enforce: Boolean) {
+//    postMessage("onDislike", mapOf("option" to option, "enforce" to enforce))
+//  }
 
   override fun onCancel() {
+  }
+
+  override fun onRefuse() {
+    TODO("Not yet implemented")
   }
 
   private fun postMessage(method: String, arguments: Map<String, Any?> = mapOf()) {
