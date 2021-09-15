@@ -23,7 +23,7 @@
 import 'config.dart';
 import 'constant.dart';
 import 'model.dart';
-
+import 'dart:convert';
 class AndroidConfig implements Config {
   final String appId;
   final bool? debug;
@@ -153,6 +153,7 @@ class AndroidRewardedVideoConfig implements Config {
   final bool isSupportDeepLink;
   final PangleLoadingType? loadingType;
   final PangleExpressSize? expressSize;
+  final Map<String, String>? customData;
 
   /// The rewarded video ad config for Android
   ///
@@ -172,7 +173,7 @@ class AndroidRewardedVideoConfig implements Config {
   /// [expressSize] optional. 模板宽高
   const AndroidRewardedVideoConfig({
     required this.slotId,
-    this.userId,
+    required this.userId,
     this.rewardName,
     this.rewardAmount,
     this.extra,
@@ -180,6 +181,7 @@ class AndroidRewardedVideoConfig implements Config {
     this.isSupportDeepLink = true,
     this.loadingType,
     this.expressSize,
+    this.customData
   });
 
   /// Convert config to json
@@ -189,7 +191,10 @@ class AndroidRewardedVideoConfig implements Config {
     if (expressSize == null) {
       expressSize = PangleExpressSize.aspectRatio9_16();
     }
-
+    var dataMap = this.customData;
+    if(dataMap == null){
+      dataMap = Map<String,String>();
+    }
     return {
       'slotId': slotId,
       'userId': userId,
@@ -200,6 +205,7 @@ class AndroidRewardedVideoConfig implements Config {
       'isSupportDeepLink': isSupportDeepLink,
       'loadingType': loadingType?.index,
       'expressSize': expressSize.toJson(),
+      "customData": jsonEncode(dataMap)
     };
   }
 }
@@ -209,6 +215,7 @@ class AndroidBannerConfig implements Config {
   final bool isSupportDeepLink;
   final PangleExpressSize expressSize;
   final int? interval;
+  final bool? isAllowShowCloseBtn;
 
   /// The feed ad config for Android
   ///
@@ -223,6 +230,7 @@ class AndroidBannerConfig implements Config {
     required this.expressSize,
     this.isSupportDeepLink = true,
     this.interval,
+    this.isAllowShowCloseBtn,
   });
 
   /// Convert config to json
@@ -233,6 +241,7 @@ class AndroidBannerConfig implements Config {
       'isSupportDeepLink': isSupportDeepLink,
       'expressSize': expressSize.toJson(),
       'interval': interval,
+      "isAllowShowCloseBtn":isAllowShowCloseBtn
     };
   }
 }
@@ -330,6 +339,7 @@ class AndroidInterstitialConfig implements Config {
 
 class AndroidFullscreenVideoConfig implements Config {
   final String slotId;
+  final String userId;
   final bool isSupportDeepLink;
   final PangleOrientation orientation;
   final PangleLoadingType loadingType;
@@ -344,6 +354,7 @@ class AndroidFullscreenVideoConfig implements Config {
   /// [expressSize] optional. 模板宽高
   const AndroidFullscreenVideoConfig({
     required this.slotId,
+    required this.userId,
     this.isSupportDeepLink = true,
     this.orientation = PangleOrientation.veritical,
     this.loadingType = PangleLoadingType.normal,
@@ -359,6 +370,7 @@ class AndroidFullscreenVideoConfig implements Config {
     }
     return {
       'slotId': slotId,
+      'userId': userId,
       'isSupportDeepLink': isSupportDeepLink,
       'orientation': orientation.index,
       'loadingType': loadingType.index,

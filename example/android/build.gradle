@@ -1,6 +1,7 @@
 buildscript {
     ext.kotlin_version = '1.4.32'
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
@@ -11,8 +12,11 @@ buildscript {
     }
 }
 
+
 allprojects {
     repositories {
+
+        mavenCentral()
         google()
         jcenter()
 //        maven { url 'http://localhost:8081/repository/maven-releases/' }

@@ -75,6 +75,7 @@ class _RewardedVideoExpressPageState extends State<RewardedVideoExpressPage> {
         loadingType: PangleLoadingType.preload_only,
       ),
       android: AndroidRewardedVideoConfig(
+        userId: "user123",
         slotId: kRewardedVideoExpressId,
         loadingType: PangleLoadingType.preload_only,
       ),
@@ -93,6 +94,7 @@ class _RewardedVideoExpressPageState extends State<RewardedVideoExpressPage> {
         loadingType: PangleLoadingType.normal,
       ),
       android: AndroidRewardedVideoConfig(
+        userId: "user123",
         slotId: kRewardedVideoExpressId,
         loadingType: PangleLoadingType.normal,
       ),
@@ -111,6 +113,7 @@ class _RewardedVideoExpressPageState extends State<RewardedVideoExpressPage> {
         loadingType: PangleLoadingType.preload,
       ),
       android: AndroidRewardedVideoConfig(
+        userId: "user123",
         slotId: kRewardedVideoExpressId,
         loadingType: PangleLoadingType.preload,
       ),

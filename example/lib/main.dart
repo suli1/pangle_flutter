@@ -25,6 +25,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pangle_flutter/pangle_flutter.dart';
+import 'package:pangle_flutter_example/page/cn/home_page.dart';
 
 import 'common/common.dart';
 import 'page/cn/constant.dart';
@@ -60,6 +61,7 @@ class PangleApp extends StatelessWidget {
     return MaterialApp(
       ///
       home: CustomSplashPage(isRoot: true),
+      // home: HomePage(),
       theme: kThemeData,
     );
   }
