@@ -37,7 +37,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (com.xgd.quyan)
         applicationId "io.github.nullptrx.pangleflutterexample"
         minSdkVersion 21
         targetSdkVersion 30
@@ -45,21 +44,9 @@ android {
         versionName flutterVersionName
     }
 
-    signingConfigs {
-        debug {
-            storeFile file("../debug.jks")
-            storePassword "Android13579"
-            keyAlias "debug"
-            keyPassword "android@2020"
-        }
-    }
-
     buildTypes {
-//        debug {
-//            signingConfig signingConfigs.debug
-//        }
         release {
-            // TODO: Add your own signing config for the release build.
+            // Test Project
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }

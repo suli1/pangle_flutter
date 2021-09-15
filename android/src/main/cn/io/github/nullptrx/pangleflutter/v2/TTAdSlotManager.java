@@ -9,7 +9,6 @@ import com.bytedance.msdk.adapter.util.UIUtils;
 import com.bytedance.msdk.api.AdSlot;
 import com.bytedance.msdk.api.TTAdConstant;
 import com.bytedance.msdk.api.TTVideoOption;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,6 +81,8 @@ public class TTAdSlotManager {
             }
             builder.setImageAdSize(w.intValue(),h.intValue());
         }
+        /*
+        // current unused
         String customData = call.argument("customData");
         if(!TextUtils.isEmpty(customData)){
             try {
@@ -91,6 +92,7 @@ public class TTAdSlotManager {
                 }
             }catch (Exception ex){}
         }
+         */
         AdSlot build = builder
                 .setAdStyleType(AdSlot.TYPE_EXPRESS_AD) // 确保该聚合广告位下所有gdt代码位都是同一种类型（模版或非模版）。
                 .setSupportDeepLink(isSupportDeepLink)

@@ -32,7 +32,6 @@ import com.bytedance.msdk.api.reward.TTRewardAd;
 import com.bytedance.msdk.api.reward.TTRewardedAdListener;
 import com.bytedance.msdk.api.splash.TTSplashAd;
 import com.bytedance.msdk.api.splash.TTSplashAdLoadCallback;
-import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
