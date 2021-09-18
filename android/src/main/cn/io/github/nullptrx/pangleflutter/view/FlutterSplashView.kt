@@ -3,10 +3,11 @@ package io.github.nullptrx.pangleflutter.view
 import android.app.Activity
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.Toast
 import com.bytedance.msdk.adapter.pangle.PangleNetworkRequestInfo
 import com.bytedance.msdk.api.AdError
+import com.bytedance.msdk.api.TTMediationAdSdk
 import com.bytedance.msdk.api.TTNetworkRequestInfo
+import com.bytedance.msdk.api.TTSettingConfigCallback
 import com.bytedance.msdk.api.splash.TTSplashAd
 import com.bytedance.msdk.api.splash.TTSplashAdListener
 import com.bytedance.msdk.api.splash.TTSplashAdLoadCallback
@@ -16,7 +17,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import io.github.nullptrx.pangleflutter.util.asMap
 import io.github.nullptrx.pangleflutter.v2.TTAdSlotManager
-import java.lang.Exception
 
 class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val id: Int, params: Map<String, Any?>) : PlatformView, MethodChannel.MethodCallHandler {
 
@@ -31,6 +31,10 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
   }
 
   fun destroy(){
+    //注销config回调
+    if(mSettingConfigCallback != null){
+      TTMediationAdSdk.unregisterConfigCallback(mSettingConfigCallback)
+    }
     if(container != null){
       container.removeAllViews();
     }
@@ -44,6 +48,10 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
     destroy();
     methodChannel.setMethodCallHandler(this)
     container = FrameLayout(context)
+    loadAdWithCallback(params);
+  }
+
+  private fun loadAdByParam(params: Map<String, Any?>) {
     val slotId = params["slotId"] as? String
     if (slotId != null) {
       val isSupportDeepLink = params["isSupportDeepLink"] as? Boolean ?: true
@@ -53,7 +61,7 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
       val w: Int = imgArgs["width"] ?: 1080
       val h: Int = imgArgs["height"] ?: 1920
 
-      mTTSplashAd = TTSplashAd(context , slotId)
+      mTTSplashAd = TTSplashAd(context, slotId)
       mTTSplashAd!!.setTTAdSplashListener(object : TTSplashAdListener {
         override fun onAdClicked() {
           //Toast.makeText(context, "onClick", Toast.LENGTH_LONG).show()
@@ -85,12 +93,18 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
       })
       //step3:创建开屏广告请求参数AdSlot,具体参数含义参考文档
       val adSlot = TTAdSlotManager.getSplashAdSlot(w, h, isSupportDeepLink);
-      var ttNetworkRequestInfo : TTNetworkRequestInfo;
+      var ttNetworkRequestInfo: TTNetworkRequestInfo;
       ttNetworkRequestInfo = PangleNetworkRequestInfo("5156773", "887562558");
       //step4:请求广告，调用开屏广告异步请求接口，对请求回调的广告作渲染处理
-      mTTSplashAd!!.loadAd(adSlot,ttNetworkRequestInfo,object : TTSplashAdLoadCallback {
+      mTTSplashAd!!.loadAd(adSlot, ttNetworkRequestInfo, object : TTSplashAdLoadCallback {
         override fun onSplashAdLoadFail(adError: AdError) {
-          postMessage("onError", mapOf("message" to adError.message + " adMessgaeDetail=" +  mTTSplashAd!!.adLoadInfoList, "code" to adError.code))
+          postMessage(
+            "onError",
+            mapOf(
+              "message" to adError.message + " adMessgaeDetail=" + mTTSplashAd!!.adLoadInfoList,
+              "code" to adError.code
+            )
+          )
           destroy();
           //Toast.makeText(context, "ERROR", Toast.LENGTH_LONG).show()
         }
@@ -100,10 +114,10 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
             try {
               mTTSplashAd!!.showAd(container)
               //Toast.makeText(context, "OK", Toast.LENGTH_LONG).show()
-            }catch (ex: Exception){
+            } catch (ex: Exception) {
               //Toast.makeText(context, "异常", Toast.LENGTH_LONG).show()
             }
-          }else{
+          } else {
             //Toast.makeText(context, "mTTSplashAd == null", Toast.LENGTH_LONG).show()
           }
         }
@@ -114,7 +128,22 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
           destroy();
         }
       }, tolerateTimeout.toInt())
+      }
+  }
+
+  fun loadAdWithCallback(params:  Map<String, Any?>) {
+    /**
+     * 判断当前是否存在config 配置 ，如果存在直接加载广告 ，如果不存在则注册config加载回调
+     */
+    if (TTMediationAdSdk.configLoadSuccess()) {
+      loadAdByParam(params)
+    } else {
+      TTMediationAdSdk.registerConfigCallback(mSettingConfigCallback) //不能使用内部类，否则在ondestory中无法移除该回调
     }
+  }
+
+  private val mSettingConfigCallback = TTSettingConfigCallback {
+    loadAdByParam(params)
   }
 
   override fun getView(): View {
@@ -123,7 +152,7 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
 
   override fun dispose() {
     methodChannel.setMethodCallHandler(null)
-    container.removeAllViews()
+    destroy();
   }
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -132,8 +161,6 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
       else -> result.notImplemented()
     }
   }
-
-
 
   private fun postMessage(method: String, arguments: Map<String, Any?> = mapOf()) {
     methodChannel.invokeMethod(method, arguments)

@@ -30,9 +30,9 @@ class FlutterBannerView(val activity: Activity, messenger: BinaryMessenger, val 
 
   init {
     methodChannel.setMethodCallHandler(this)
-    loadAdWithCallback(params);
     context = activity
     container = FrameLayout(context)
+    loadAdWithCallback(params);
   }
 
     private fun loadAdByParam(params: Map<String, Any?>) {
