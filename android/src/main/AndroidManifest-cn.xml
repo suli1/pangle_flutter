@@ -24,10 +24,6 @@
     <!-- 如果有视频相关的广告且使用textureView播放，请务必添加，否则黑屏 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <uses-sdk tools:overrideLibrary="com.google.android.gms.ads_base,com.google.android.gms.ads.impl,com.google.android.gms.gass,com.google.android.gms.ads,com.kwad.sdk,com.sigmob.windad,com.unity3d.ads,com.bun.miitmdid
-    ,com.mbridge.msdk.video,com.mbridge.msdk.mbsignalcommon,com.mbridge.msdk.playercommon,com.mbridge.msdk.reward,com.mbridge.msdk.banner,com.mbridge.msdk.splash
-,com.mbridge.msdk.videocommon,com.mbridge.msdk,com.mbridge.msdk.intervideo,com.mbridge.msdk.mbnative,com.mbridge.msdk.nativex,com.mbridge.msdk.advanced,com.mbridge.msdk.interstitial,com.tencent.klevin,com.bytedance.sdk.openadsdk.adhost" />
-
     <application>
 
         <uses-library

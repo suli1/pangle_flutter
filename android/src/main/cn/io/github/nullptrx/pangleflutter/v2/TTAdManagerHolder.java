@@ -89,6 +89,7 @@ public class TTAdManagerHolder {
     //step1:接入网盟广告sdk的初始化操作，详情见接入文档和穿山甲平台说明
     private static void doInit(Context context, Map<String, Object> map,MethodChannel.Result result) {
         if (!sInit) {
+            sInit = true;
             TTAdConfig ttAdConfig = buildConfig(context, map);
             if(ttAdConfig == null){
                 HashMap<String, Object> resultMap = new HashMap<>();
@@ -98,12 +99,12 @@ public class TTAdManagerHolder {
                 return;
             }
             TTMediationAdSdk.initialize(context, buildConfig(context, map));
-            HashMap<String, Object> resultMap = new HashMap<>();
-            resultMap.put("code",0);
-            resultMap.put("message","init success");
-            result.success(resultMap);
-            sInit = true;
         }
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code",0);
+        resultMap.put("message","init success");
+        result.success(resultMap);
+        //Toast.makeText(context,"init",Toast.LENGTH_LONG).show();;
     }
 
     private static TTAdConfig buildConfig(Context context, Map<String, Object> map) {
