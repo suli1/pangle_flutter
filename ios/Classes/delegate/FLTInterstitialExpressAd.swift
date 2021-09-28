@@ -5,10 +5,10 @@
 //  Created by Jerry on 2020/8/12.
 //
 
-import BUAdSDK
 import Flutter
+import ABUAdSDK
 
-internal final class FLTInterstitialExpressAd: NSObject, BUNativeExpresInterstitialAdDelegate {
+internal final class FLTInterstitialExpressAd: NSObject, ABUInterstitialAdDelegate {
     typealias Success = () -> Void
     typealias Fail = (Error?) -> Void
     
@@ -20,20 +20,20 @@ internal final class FLTInterstitialExpressAd: NSObject, BUNativeExpresInterstit
         self.fail = fail
     }
     
-    func nativeExpresInterstitialAdRenderSuccess(_ interstitialAd: BUNativeExpressInterstitialAd) {
+    func interstitialAdDidLoad(_ interstitialAd: ABUInterstitialAd) {
         let vc = AppUtil.getVC()
         interstitialAd.show(fromRootViewController: vc)
     }
     
-    func nativeExpresInterstitialAd(_ interstitialAd: BUNativeExpressInterstitialAd, didFailWithError error: Error?) {
-        self.fail?(error)
-    }
-    
-    func nativeExpresInterstitialAdRenderFail(_ interstitialAd: BUNativeExpressInterstitialAd, error: Error?) {
-        self.fail?(error)
-    }
-    
-    func nativeExpresInterstitialAdDidClose(_ interstitialAd: BUNativeExpressInterstitialAd) {
+    func interstitialAdDidClose(_ interstitialAd: ABUInterstitialAd) {
         self.success?()
+    }
+    
+    func interstitialAdViewRenderFail(_ interstitialAd: ABUInterstitialAd, error: Error?) {
+        self.fail?(error)
+    }
+    
+    func interstitialAdDidShowFailed(_ interstitialAd: ABUInterstitialAd, error: Error) {
+        self.fail?(error)
     }
 }

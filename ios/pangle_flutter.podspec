@@ -21,6 +21,10 @@ Flutter plugin for Pangle Ad SDK.
 
   s.default_subspec   = 'cn'
 
+  s.vendored_frameworks = 'Frameworks/*.framework'
+  
+  s.dependency 'GDTMobSDK', '4.13.02'
+  
   s.subspec 'cn' do |ss|
     ss.ios.dependency 'Ads-CN', '~> 3.8'
   end

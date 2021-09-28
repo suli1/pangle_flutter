@@ -5,15 +5,15 @@
 //  Created by nullptrX on 2020/8/16.
 //
 
-import BUAdSDK
 import Foundation
+import ABUAdSDK
 
 internal final class FLTNativeExpressAdTask: FLTTaskProtocol {
-    public let manager: BUNativeExpressAdManager
-    private var delegate: FLTNativeExpressAdViewDelegate?
+    public let manager: ABUNativeAdsManager
+    private var delegate: ABUNativeAdsManagerDelegate?
     private var count: Int
     
-    internal init(manager: BUNativeExpressAdManager, count: Int) {
+    internal init(manager: ABUNativeAdsManager, count: Int) {
         self.manager = manager
         self.count = count
     }
@@ -28,15 +28,16 @@ internal final class FLTNativeExpressAdTask: FLTTaskProtocol {
 
         let adSize = CGSize(width: width, height: height)
         
-        let slot = BUAdSlot()
-        slot.id = slotId
+        let slot = ABUAdUnit()
         slot.adType = .feed
         slot.position = .feed
-
-        let nad = BUNativeExpressAdManager(slot: slot, adSize: adSize)
-        nad.adSize = adSize
-        
-        self.init(manager: nad, count: count)
+        slot.imgSize = ABUSize(by: .feed228_150)
+        slot.adSize = adSize
+        slot.id = slotId
+    
+        let mananger = ABUNativeAdsManager(slot: slot)
+        mananger.rootViewController = AppUtil.getCurrentVC()
+        self.init(manager: mananger, count: count)
     }
     
     func execute() -> (@escaping (FLTTaskProtocol, Any) -> Void) -> Void {
@@ -53,8 +54,7 @@ internal final class FLTNativeExpressAdTask: FLTTaskProtocol {
             self.manager.delegate = delegate
             self.delegate = delegate
             
-            self.manager.loadAd(self.count)
+            self.manager.loadAdData(withCount: self.count)
         }
     }
-    
 }

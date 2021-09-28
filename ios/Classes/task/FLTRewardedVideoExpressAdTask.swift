@@ -5,16 +5,16 @@
 //  Created by nullptrX on 2020/8/16.
 //
 
-import BUAdSDK
+import ABUAdSDK
 
 internal final class FLTRewardedVideoExpressAdTask: FLTTaskProtocol {
-    private var manager: BUNativeExpressRewardedVideoAd
-    private var delegate: BUNativeExpressRewardedVideoAdDelegate?
+    var rewardedVideoAd: ABURewardedVideoAd?
     private var slotId: String = ""
-
-    internal init(_ manager: BUNativeExpressRewardedVideoAd) {
-        self.manager = manager
-    }
+    private var delegate: ABURewardedVideoAdDelegate?
+    
+    internal init(_ manager: ABURewardedVideoAd) {
+            self.rewardedVideoAd = manager
+        }
 
     init(_ args: [String: Any?]) {
         slotId = args["slotId"] as! String
@@ -22,8 +22,8 @@ internal final class FLTRewardedVideoExpressAdTask: FLTTaskProtocol {
         let rewardName: String? = args["rewardName"] as? String
         let rewardAmount: Int? = args["rewardAmount"] as? Int
         let extra: String? = args["extra"] as? String
-        let model = BURewardedVideoModel()
-
+        
+        let model = ABURewardedVideoModel()
         model.userId = userId
         if rewardName != nil {
             model.rewardName = rewardName
@@ -34,8 +34,8 @@ internal final class FLTRewardedVideoExpressAdTask: FLTTaskProtocol {
         if extra != nil {
             model.extra = extra
         }
-        let manager = BUNativeExpressRewardedVideoAd(slotID: slotId, rewardedVideoModel: model)
-        self.manager = manager
+        self.rewardedVideoAd = ABURewardedVideoAd(adUnitID: slotId, rewardedVideoModel: model)
+        self.rewardedVideoAd!.mutedIfCan = false
     }
 
     func execute(_ loadingType: LoadingType) -> (@escaping (FLTTaskProtocol, Any) -> Void) -> Void {
@@ -52,11 +52,17 @@ internal final class FLTRewardedVideoExpressAdTask: FLTTaskProtocol {
                 let e = error as NSError?
                 result(self, ["code": e?.code ?? -1, "message": error?.localizedDescription ?? ""])
             })
-
-            manager.delegate = delegate
-            self.delegate = delegate
-
-            manager.loadData()
+            self.rewardedVideoAd!.delegate = delegate;
+            self.delegate = delegate;
+            //当前配置拉取成功直接加载广告
+            if ABUAdSDKManager.configDidLoad() {
+                self.rewardedVideoAd?.loadData()
+            } else {
+                // 配置没有拉取成功，配置到达回调里加载广告
+                ABUAdSDKManager.addConfigLoadSuccessObserver(self) { (Any) in
+                    self.rewardedVideoAd?.loadData()
+                }
+            }
         }
     }
 }

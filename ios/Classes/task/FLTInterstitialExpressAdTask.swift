@@ -5,13 +5,13 @@
 //  Created by nullptrX on 2020/8/16.
 //
 
-import BUAdSDK
+import ABUAdSDK
 
 internal final class FLTInterstitialExpressAdTask: FLTTaskProtocol {
-    private var manager: BUNativeExpressInterstitialAd
-    private var delegate: BUNativeExpresInterstitialAdDelegate?
+    private var manager: ABUInterstitialAd
+    private var delegate: ABUInterstitialAdDelegate?
     
-    internal init(_ manager: BUNativeExpressInterstitialAd) {
+    internal init(_ manager: ABUInterstitialAd) {
         self.manager = manager
     }
     
@@ -20,10 +20,8 @@ internal final class FLTInterstitialExpressAdTask: FLTTaskProtocol {
         let expressArgs = args["expressSize"] as! [String: Double]
         let width = expressArgs["width"]!
         let height = expressArgs["height"]!
-//        let width = Double(UIScreen.main.bounds.width) * 0.9
-//        let height = width / Double(size.width) * Double(size.height)
         let adSize = CGSize(width: width, height: height)
-        let manager = BUNativeExpressInterstitialAd(slotID: slotId, adSize: adSize)
+        let manager = ABUInterstitialAd(adUnitID: slotId, size: adSize)
         self.init(manager)
     }
     

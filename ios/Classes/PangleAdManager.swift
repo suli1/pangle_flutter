@@ -7,11 +7,12 @@
 
 import BUAdSDK
 import Flutter
+import ABUAdSDK
 
 public final class PangleAdManager: NSObject {
     public static let shared = PangleAdManager()
 
-    private var expressAdCollection: [String: BUNativeExpressAdView] = [:]
+    private var expressAdCollection: [String: ABUNativeAdView] = [:]
 
     private var rewardedVideoAdData: [String: [Any]] = [:]
 
@@ -43,7 +44,10 @@ public final class PangleAdManager: NSObject {
         let isPaidApp: Bool? = args["coppa"] as? Bool
 
         BUAdSDKManager.setAppID(appId)
-
+        ABUPrivacyConfig.setPrivacyWithKey(kABUPrivacyForbiddenCAID, andValue: 0)
+        ABUAdSDKManager.setAppID(appId)
+//        ABUAdSDKManager.setLoglevel(ABUAdSDKLogLevel.debug, language: ABUAdSDKLogLanguage.CH)
+        
         if isPaidApp != nil {
             BUAdSDKManager.setIsPaidApp(isPaidApp!)
         }
@@ -59,7 +63,7 @@ public final class PangleAdManager: NSObject {
 
     public func loadSplashAd(_ args: [String: Any?], result: @escaping FlutterResult) {
         let isExpress: Bool = args["isExpress"] as? Bool ?? false
-
+        
         if isExpress {
             let task = FLTSplashExpressAdTask(args)
             self.execTask(task)({ object in
@@ -90,9 +94,8 @@ public final class PangleAdManager: NSObject {
         } else {
             loadRewardVideoAdOnly(args, loadingType: .preload_only, result: result)
         }
-
     }
-
+    
     private func loadRewardVideoAdOnly(_ args: [String: Any?], loadingType: LoadingType, result: FlutterResult? = nil) {
         let task = FLTRewardedVideoExpressAdTask(args)
         execTask(task, loadingType)({ data in
@@ -155,19 +158,18 @@ enum LoadingType: Int {
 }
 
 extension PangleAdManager {
-
-    public func setExpressAd(_ nativeExpressAdViews: [BUNativeExpressAdView]?) {
+    public func setExpressAd(_ nativeExpressAdViews: [ABUNativeAdView]?) {
         guard let nativeAds = nativeExpressAdViews else {
             return
         }
-        var expressAds: [String: BUNativeExpressAdView] = [:]
+        var expressAds: [String: ABUNativeAdView] = [:]
         for nativeAd in nativeAds {
             expressAds[String(nativeAd.hash)] = nativeAd
         }
         expressAdCollection.merge(expressAds, uniquingKeysWith: { _, last in last })
     }
 
-    public func getExpressAd(_ key: String) -> BUNativeExpressAdView? {
+    public func getExpressAd(_ key: String) -> ABUNativeAdView? {
         expressAdCollection[key]
     }
 
@@ -187,14 +189,43 @@ extension PangleAdManager {
         }
     }
 
+//    public func showRewardedVideoAd(_ args: [String: Any?]) -> (@escaping (Any) -> Void) -> Bool {
+//        { result in
+//            let slotId: String = args["slotId"] as! String
+//            var data = self.rewardedVideoAdData[slotId] ?? []
+//            if data.count > 0 {
+//                let obj = data[0]
+//                if obj is BUNativeExpressRewardedVideoAd {
+//                    let ad = obj as! BUNativeExpressRewardedVideoAd
+//                    ad.didReceiveSuccess = { verify in
+//                        data.removeFirst()
+//                        self.rewardedVideoAdData[slotId] = data
+//                        result(["code": 0, "verify": verify])
+//                    }
+//                    ad.didReceiveFail = { error in
+//                        data.removeFirst()
+//                        self.rewardedVideoAdData[slotId] = data
+//                        let e = error as NSError?
+//                        result(["code": e?.code ?? -1, "message": e?.localizedDescription ?? ""])
+//                    }
+//                    let vc = AppUtil.getVC()
+//                    ad.show(fromRootViewController: vc)
+//                    return true
+//                }
+//            }
+//
+//            return false
+//        }
+//    }
+
     public func showRewardedVideoAd(_ args: [String: Any?]) -> (@escaping (Any) -> Void) -> Bool {
         { result in
             let slotId: String = args["slotId"] as! String
             var data = self.rewardedVideoAdData[slotId] ?? []
             if data.count > 0 {
                 let obj = data[0]
-                if obj is BUNativeExpressRewardedVideoAd {
-                    let ad = obj as! BUNativeExpressRewardedVideoAd
+                if obj is ABURewardedVideoAd {
+                    let ad = obj as! ABURewardedVideoAd
                     ad.didReceiveSuccess = { verify in
                         data.removeFirst()
                         self.rewardedVideoAdData[slotId] = data
@@ -215,7 +246,7 @@ extension PangleAdManager {
             return false
         }
     }
-
+    
     public func setFullScreenVideoAd(_ slotId: String, _ ad: NSObject?) {
         if ad != nil {
             var data = fullscreenVideoAdData[slotId] ?? []
@@ -231,8 +262,8 @@ extension PangleAdManager {
             if data.count > 0 {
                 let obj = data[0]
 
-                if obj is BUNativeExpressFullscreenVideoAd {
-                    let ad = obj as! BUNativeExpressFullscreenVideoAd
+                if obj is ABUFullscreenVideoAd {
+                    let ad = obj as! ABUFullscreenVideoAd
                     ad.didReceiveSuccess = {
                         data.removeFirst()
                         self.fullscreenVideoAdData[slotId] = data
