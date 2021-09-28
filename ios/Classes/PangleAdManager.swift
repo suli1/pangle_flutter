@@ -189,35 +189,6 @@ extension PangleAdManager {
         }
     }
 
-//    public func showRewardedVideoAd(_ args: [String: Any?]) -> (@escaping (Any) -> Void) -> Bool {
-//        { result in
-//            let slotId: String = args["slotId"] as! String
-//            var data = self.rewardedVideoAdData[slotId] ?? []
-//            if data.count > 0 {
-//                let obj = data[0]
-//                if obj is BUNativeExpressRewardedVideoAd {
-//                    let ad = obj as! BUNativeExpressRewardedVideoAd
-//                    ad.didReceiveSuccess = { verify in
-//                        data.removeFirst()
-//                        self.rewardedVideoAdData[slotId] = data
-//                        result(["code": 0, "verify": verify])
-//                    }
-//                    ad.didReceiveFail = { error in
-//                        data.removeFirst()
-//                        self.rewardedVideoAdData[slotId] = data
-//                        let e = error as NSError?
-//                        result(["code": e?.code ?? -1, "message": e?.localizedDescription ?? ""])
-//                    }
-//                    let vc = AppUtil.getVC()
-//                    ad.show(fromRootViewController: vc)
-//                    return true
-//                }
-//            }
-//
-//            return false
-//        }
-//    }
-
     public func showRewardedVideoAd(_ args: [String: Any?]) -> (@escaping (Any) -> Void) -> Bool {
         { result in
             let slotId: String = args["slotId"] as! String
