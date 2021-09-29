@@ -43,7 +43,7 @@ public final class PangleAdManager: NSObject {
         let coppa: UInt? = args["coppa"] as? UInt
         let isPaidApp: Bool? = args["coppa"] as? Bool
 
-        BUAdSDKManager.setAppID(appId)
+//        BUAdSDKManager.setAppID(appId)
         ABUPrivacyConfig.setPrivacyWithKey(kABUPrivacyForbiddenCAID, andValue: 0)
         ABUAdSDKManager.setAppID(appId)
 //        ABUAdSDKManager.setLoglevel(ABUAdSDKLogLevel.debug, language: ABUAdSDKLogLanguage.CH)
