@@ -5,9 +5,9 @@
 //  Created by Jerry on 2020/7/19.
 //
 
-import BUAdSDK
 import Flutter
 import WebKit
+import ABUAdSDK
 
 public class FLTFeedView: NSObject, FlutterPlatformView {
     private let widget: FeedView
@@ -30,8 +30,8 @@ public class FLTFeedView: NSObject, FlutterPlatformView {
 
     private func removeAllView() {
         widget.subviews.forEach {
-            if $0 is BUNativeExpressAdView {
-                let v = $0 as! BUNativeExpressAdView
+            if $0 is ABUNativeAdView {
+                let v = $0 as! ABUNativeAdView
                 v.extraDelegate = nil
                 v.extraManager = nil
                 v.extraChannel = nil
@@ -166,7 +166,7 @@ class FeedView: UIView {
         }
         self.id = id
         let ad = PangleAdManager.shared.getExpressAd(id)
-        guard let expressAd: BUNativeExpressAdView = ad else {
+        guard let expressAd: ABUNativeAdView = ad else {
             return
         }
         expressAd.rootViewController = AppUtil.getVC()

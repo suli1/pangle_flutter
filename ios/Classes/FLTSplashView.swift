@@ -72,7 +72,6 @@ extension SplashView: BUSplashAdDelegate {
 }
 
 class SplashView: UIView {
-
     private var mounted: Bool = false
     private var params: [String: Any?] = [:]
     private var methodChannel: FlutterMethodChannel? = nil

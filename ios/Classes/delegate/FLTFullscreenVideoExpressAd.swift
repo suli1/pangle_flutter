@@ -5,10 +5,10 @@
 //  Created by nullptrX on 2020/8/25.
 //
 
-import BUAdSDK
 import Foundation
+import ABUAdSDK
 
-internal final class FLTFullscreenVideoExpressAd: NSObject, BUNativeExpressFullscreenVideoAdDelegate {
+internal final class FLTFullscreenVideoExpressAd: NSObject, ABUFullscreenVideoAdDelegate {
     typealias Success = () -> Void
     typealias Fail = (Error?) -> Void
 
@@ -26,7 +26,7 @@ internal final class FLTFullscreenVideoExpressAd: NSObject, BUNativeExpressFulls
         self.fail = fail
     }
 
-    func nativeExpressFullscreenVideoAdDidLoad(_ fullscreenVideoAd: BUNativeExpressFullscreenVideoAd) {
+    func fullscreenVideoAdDidLoad(_ fullscreenVideoAd: ABUFullscreenVideoAd) {
         let preload = self.loadingType == .preload || self.loadingType == .preload_only
         if preload {
             self.loadingType = .normal
@@ -40,8 +40,8 @@ internal final class FLTFullscreenVideoExpressAd: NSObject, BUNativeExpressFulls
             fullscreenVideoAd.show(fromRootViewController: vc)
         }
     }
-
-    func nativeExpressFullscreenVideoAdDidClose(_ fullscreenVideoAd: BUNativeExpressFullscreenVideoAd) {
+    
+    func fullscreenVideoAdDidClose(_ fullscreenVideoAd: ABUFullscreenVideoAd) {
         if self.isSkipped {
             return
         }
@@ -51,8 +51,8 @@ internal final class FLTFullscreenVideoExpressAd: NSObject, BUNativeExpressFulls
             self.success?()
         }
     }
-
-    func nativeExpressFullscreenVideoAdDidClickSkip(_ fullscreenVideoAd: BUNativeExpressFullscreenVideoAd) {
+    
+    func fullscreenVideoAdDidSkip(_ fullscreenVideoAd: ABUFullscreenVideoAd) {
         self.isSkipped = true
         let error = NSError(domain: "skip", code: -1, userInfo: nil)
         if fullscreenVideoAd.didReceiveFail != nil {
@@ -61,42 +61,32 @@ internal final class FLTFullscreenVideoExpressAd: NSObject, BUNativeExpressFulls
             self.fail?(error)
         }
     }
-
-    func nativeExpressFullscreenVideoAdViewRenderSuccess(_ rewardedVideoAd: BUNativeExpressFullscreenVideoAd) {
-    }
-
-    func nativeExpressFullscreenVideoAdDidDownLoadVideo(_ fullscreenVideoAd: BUNativeExpressFullscreenVideoAd) {
-    }
-
-    func nativeExpressFullscreenVideoAdViewRenderFail(_ fullscreenVideoAd: BUNativeExpressFullscreenVideoAd, error: Error?) {
+    
+    func fullscreenVideoAdDidShowFailed(_ fullscreenVideoAd: ABUFullscreenVideoAd, error: Error) {
         if fullscreenVideoAd.didReceiveFail != nil {
             fullscreenVideoAd.didReceiveFail?(error)
         } else {
             self.fail?(error)
         }
     }
-
-    func nativeExpressFullscreenVideoAd(_ fullscreenVideoAd: BUNativeExpressFullscreenVideoAd, didFailWithError error: Error?) {
+    
+    func fullscreenVideoAd(_ fullscreenVideoAd: ABUFullscreenVideoAd, didFailWithError error: Error?) {
         if fullscreenVideoAd.didReceiveFail != nil {
             fullscreenVideoAd.didReceiveFail?(error)
         } else {
             self.fail?(error)
         }
     }
-
-    func nativeExpressFullscreenVideoAdDidPlayFinish(_ fullscreenVideoAd: BUNativeExpressFullscreenVideoAd, didFailWithError error: Error?) {
-    }
-
 }
 
 private var delegateKey = "nullptrx.github.io/delegate"
 private var successKey = "nullptrx.github.io/delegate_success"
 private var failKey = "nullptrx.github.io/delegate_fail"
 
-extension BUNativeExpressFullscreenVideoAd {
-    var extraDelegate: BUNativeExpressFullscreenVideoAdDelegate? {
+extension ABUFullscreenVideoAd {
+    var extraDelegate: ABUFullscreenVideoAdDelegate? {
         get {
-            return objc_getAssociatedObject(self, &delegateKey) as? BUNativeExpressFullscreenVideoAdDelegate
+            return objc_getAssociatedObject(self, &delegateKey) as? ABUFullscreenVideoAdDelegate
         }
         set {
             objc_setAssociatedObject(self, &delegateKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

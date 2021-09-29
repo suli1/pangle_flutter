@@ -5,20 +5,20 @@
 //  Created by nullptrX on 2020/8/25.
 //
 
-import BUAdSDK
+import ABUAdSDK
 
 internal final class FLTFullscreenVideoExpressAdTask: FLTTaskProtocol {
-    private var manager: BUNativeExpressFullscreenVideoAd
-    private var delegate: BUNativeExpressFullscreenVideoAdDelegate?
+    private var manager: ABUFullscreenVideoAd
+    private var delegate: ABUFullscreenVideoAdDelegate?
     private var slotId: String = ""
 
-    internal init(_ manager: BUNativeExpressFullscreenVideoAd) {
+    internal init(_ manager: ABUFullscreenVideoAd) {
         self.manager = manager
     }
 
     init(_ args: [String: Any?]) {
         slotId = args["slotId"] as! String
-        let manager = BUNativeExpressFullscreenVideoAd(slotID: slotId)
+        let manager = ABUFullscreenVideoAd(adUnitID: slotId)
         self.manager = manager
     }
 
