@@ -1,8 +1,10 @@
 package io.github.nullptrx.pangleflutter.view
 
 import android.app.Activity
+import android.os.CountDownTimer
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.Toast
 import com.bytedance.msdk.adapter.pangle.PangleNetworkRequestInfo
 import com.bytedance.msdk.api.AdError
 import com.bytedance.msdk.api.TTMediationAdSdk
@@ -17,6 +19,8 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import io.github.nullptrx.pangleflutter.util.asMap
 import io.github.nullptrx.pangleflutter.v2.TTAdSlotManager
+import java.util.*
+
 
 class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val id: Int, params: Map<String, Any?>) : PlatformView, MethodChannel.MethodCallHandler {
 
@@ -24,25 +28,23 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
   private val container: FrameLayout
   private var mTTSplashAd: TTSplashAd? = null
   private var hideSkipButton = false
+  private var countDownTimer: CountDownTimer? = null
+  private var isCompleted = false;
 
   override fun onFlutterViewDetached() {
-    //Toast.makeText(context, "onFlutterViewDetached", Toast.LENGTH_LONG).show()
     destroy();
   }
 
-  fun destroy(){
-    //注销config回调
-    if(mSettingConfigCallback != null){
-      TTMediationAdSdk.unregisterConfigCallback(mSettingConfigCallback)
+  private fun destroy(){
+    if(countDownTimer != null){
+      countDownTimer!!.cancel();
     }
-    if(container != null){
-      container.removeAllViews();
-    }
+    TTMediationAdSdk.unregisterConfigCallback(mSettingConfigCallback)
+    container.removeAllViews();
     if(mTTSplashAd != null){
       mTTSplashAd!!.destroy();
     }
   }
-
 
   init {
     destroy();
@@ -56,6 +58,7 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
     if (slotId != null) {
       val isSupportDeepLink = params["isSupportDeepLink"] as? Boolean ?: true
       val tolerateTimeout = params["tolerateTimeout"] as? Double ?: 3
+      val exceptionTimeout = tolerateTimeout.toInt() + 1;
       hideSkipButton = params["hideSkipButton"] as? Boolean ?: false
       val imgArgs: Map<String, Int?> = params["imageSize"]?.asMap() ?: mapOf()
       val w: Int = imgArgs["width"] ?: 1080
@@ -64,31 +67,23 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
       mTTSplashAd = TTSplashAd(context, slotId)
       mTTSplashAd!!.setTTAdSplashListener(object : TTSplashAdListener {
         override fun onAdClicked() {
-          //Toast.makeText(context, "onClick", Toast.LENGTH_LONG).show()
           postMessage("onClick")
         }
 
         override fun onAdShow() {
-          //Toast.makeText(context, "onShow", Toast.LENGTH_LONG).show()
           postMessage("onShow")
         }
 
         override fun onAdShowFail(adError: AdError) {
-          //Toast.makeText(context, "onAdShowFail", Toast.LENGTH_LONG).show()
           postMessage("onError", mapOf("message" to adError.message, "code" to adError.code))
-          destroy();
         }
 
         override fun onAdSkip() {
-          //Toast.makeText(context, "onSkip", Toast.LENGTH_LONG).show()
           postMessage("onSkip")
-          destroy();
         }
 
         override fun onAdDismiss() {
-          //Toast.makeText(context, "onAdDismiss", Toast.LENGTH_LONG).show()
           postMessage("onTimeOver")
-          destroy();
         }
       })
       //step3:创建开屏广告请求参数AdSlot,具体参数含义参考文档
@@ -105,33 +100,35 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
               "code" to adError.code
             )
           )
-          destroy();
-          //Toast.makeText(context, "ERROR", Toast.LENGTH_LONG).show()
         }
 
         override fun onSplashAdLoadSuccess() {
-          if (mTTSplashAd != null && container != null) {
+          if (mTTSplashAd != null) {
             try {
               mTTSplashAd!!.showAd(container)
-              //Toast.makeText(context, "OK", Toast.LENGTH_LONG).show()
+              countDownTimer = object: CountDownTimer(((exceptionTimeout) * 1000).toLong(), 1000) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                  if(!isCompleted){
+                    postMessage("onSkip")
+                  }
+                  Toast.makeText(context,"onFinish",Toast.LENGTH_LONG).show();
+                }
+              }
+              countDownTimer!!.start();
             } catch (ex: Exception) {
-              //Toast.makeText(context, "异常", Toast.LENGTH_LONG).show()
             }
-          } else {
-            //Toast.makeText(context, "mTTSplashAd == null", Toast.LENGTH_LONG).show()
           }
         }
 
         override fun onAdLoadTimeout() {
-          //Toast.makeText(context, "超时", Toast.LENGTH_LONG).show()
           postMessage("onTimeOver")
-          destroy();
         }
       }, tolerateTimeout.toInt())
       }
   }
 
-  fun loadAdWithCallback(params:  Map<String, Any?>) {
+  private fun loadAdWithCallback(params:  Map<String, Any?>) {
     /**
      * 判断当前是否存在config 配置 ，如果存在直接加载广告 ，如果不存在则注册config加载回调
      */
@@ -163,6 +160,7 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
   }
 
   private fun postMessage(method: String, arguments: Map<String, Any?> = mapOf()) {
+    isCompleted = true;
     methodChannel.invokeMethod(method, arguments)
   }
 }
