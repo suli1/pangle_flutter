@@ -4,7 +4,6 @@ import android.app.Activity
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.Toast
 import com.bytedance.msdk.adapter.pangle.PangleNetworkRequestInfo
 import com.bytedance.msdk.api.AdError
 import com.bytedance.msdk.api.TTMediationAdSdk
@@ -19,8 +18,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import io.github.nullptrx.pangleflutter.util.asMap
 import io.github.nullptrx.pangleflutter.v2.TTAdSlotManager
-import java.util.*
-
 
 class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val id: Int, params: Map<String, Any?>) : PlatformView, MethodChannel.MethodCallHandler {
 
@@ -28,7 +25,7 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
   private val container: FrameLayout
   private var mTTSplashAd: TTSplashAd? = null
   private var hideSkipButton = false
-  private var countDownTimer: CountDownTimer? = null
+  private lateinit var countDownTimer: CountDownTimer
   private var isCompleted = false;
 
   override fun onFlutterViewDetached() {
@@ -37,8 +34,9 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
 
   private fun destroy(){
     if(countDownTimer != null){
-      countDownTimer!!.cancel();
+      countDownTimer.cancel();
     }
+    isCompleted = false
     TTMediationAdSdk.unregisterConfigCallback(mSettingConfigCallback)
     container.removeAllViews();
     if(mTTSplashAd != null){
@@ -47,10 +45,9 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
   }
 
   init {
-    destroy();
     methodChannel.setMethodCallHandler(this)
     container = FrameLayout(context)
-    loadAdWithCallback(params);
+    loadAdWithCallback(params)
   }
 
   private fun loadAdByParam(params: Map<String, Any?>) {
@@ -58,7 +55,7 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
     if (slotId != null) {
       val isSupportDeepLink = params["isSupportDeepLink"] as? Boolean ?: true
       val tolerateTimeout = params["tolerateTimeout"] as? Double ?: 3
-      val exceptionTimeout = tolerateTimeout.toInt() + 1;
+      val exceptionTimeout = tolerateTimeout.toDouble() + 1;
       hideSkipButton = params["hideSkipButton"] as? Boolean ?: false
       val imgArgs: Map<String, Int?> = params["imageSize"]?.asMap() ?: mapOf()
       val w: Int = imgArgs["width"] ?: 1080
@@ -104,20 +101,17 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
 
         override fun onSplashAdLoadSuccess() {
           if (mTTSplashAd != null) {
-            try {
-              mTTSplashAd!!.showAd(container)
-              countDownTimer = object: CountDownTimer(((exceptionTimeout) * 1000).toLong(), 1000) {
-                override fun onTick(millisUntilFinished: Long) {}
-                override fun onFinish() {
-                  if(!isCompleted){
-                    postMessage("onSkip")
-                  }
-                  Toast.makeText(context,"onFinish",Toast.LENGTH_LONG).show();
+            mTTSplashAd!!.showAd(container)
+            countDownTimer = object : CountDownTimer((exceptionTimeout *  1000).toLong(),1000){
+              override fun onFinish() {
+                if(!isCompleted){
+                  postMessage("onTimeOver")
                 }
               }
-              countDownTimer!!.start();
-            } catch (ex: Exception) {
+              override fun onTick(millisUntilFinished: Long) {
+              }
             }
+            countDownTimer.start();
           }
         }
 
@@ -161,6 +155,9 @@ class FlutterSplashView(val context: Activity, messenger: BinaryMessenger, val i
 
   private fun postMessage(method: String, arguments: Map<String, Any?> = mapOf()) {
     isCompleted = true;
+    if(countDownTimer != null){
+      countDownTimer.cancel();
+    }
     methodChannel.invokeMethod(method, arguments)
   }
 }
