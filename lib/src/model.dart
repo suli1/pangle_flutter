@@ -194,6 +194,21 @@ class PangleSize {
   }
 }
 
+/// 兜底策略
+class OutInfo{
+  String appId;
+  String slotId;
+
+  OutInfo({required this.appId, required this.slotId});
+
+  Map<String, String> toJson() {
+    return {
+      'appId': appId,
+      'slotId': slotId,
+    };
+  }
+}
+
 /// 插件返回的结果
 ///
 class PangleResult {

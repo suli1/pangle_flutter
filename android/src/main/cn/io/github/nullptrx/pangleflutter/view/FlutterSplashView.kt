@@ -63,7 +63,7 @@ class FlutterSplashView(
             val imgArgs: Map<String, Int?> = params["imageSize"]?.asMap() ?: mapOf()
             val w: Int = imgArgs["width"] ?: 1080
             val h: Int = imgArgs["height"] ?: 1920
-
+            val outInfo: Map<String, String> = params["outInfo"]?.asMap() ?: mapOf()
             mTTSplashAd = TTSplashAd(context, slotId)
             mTTSplashAd!!.setTTAdSplashListener(object : TTSplashAdListener {
                 override fun onAdClicked() {
@@ -91,7 +91,14 @@ class FlutterSplashView(
             })
             //step3:创建开屏广告请求参数AdSlot,具体参数含义参考文档
             val adSlot = TTAdSlotManager.getSplashAdSlot(w, h, isSupportDeepLink)
-            val ttNetworkRequestInfo: TTNetworkRequestInfo = PangleNetworkRequestInfo("5156773", "887562558")
+
+            var ttNetworkRequestInfo: TTNetworkRequestInfo? = null
+
+            if(outInfo.isNotEmpty()){
+                val outAppId : String = outInfo["appId"]!!
+                val outSlotId : String = outInfo["slotId"]!!
+                ttNetworkRequestInfo = PangleNetworkRequestInfo(outAppId, outSlotId)
+            }
             //step4:请求广告，调用开屏广告异步请求接口，对请求回调的广告作渲染处理
             mTTSplashAd!!.loadAd(adSlot, ttNetworkRequestInfo, object : TTSplashAdLoadCallback {
                 override fun onSplashAdLoadFail(adError: AdError) {
