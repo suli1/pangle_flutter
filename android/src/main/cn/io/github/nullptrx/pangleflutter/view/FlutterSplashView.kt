@@ -34,15 +34,15 @@ class FlutterSplashView(
     private lateinit var countDownTimer: CountDownTimer
 
     override fun onFlutterViewDetached() {
-        destroy();
+        destroy()
     }
 
     private fun destroy() {
-        countDownTimer.cancel();
+        countDownTimer.cancel()
         TTMediationAdSdk.unregisterConfigCallback(mSettingConfigCallback)
-        container.removeAllViews();
+        container.removeAllViews()
         if (mTTSplashAd != null) {
-            mTTSplashAd!!.destroy();
+            mTTSplashAd!!.destroy()
         }
         methodChannel.setMethodCallHandler(null)
     }
@@ -58,7 +58,7 @@ class FlutterSplashView(
         if (slotId != null) {
             val isSupportDeepLink = params["isSupportDeepLink"] as? Boolean ?: true
             val tolerateTimeout = params["tolerateTimeout"] as? Double ?: 3
-            val exceptionTimeout = tolerateTimeout.toDouble() + 1;
+            val exceptionTimeout = tolerateTimeout.toDouble() + 1
             hideSkipButton = params["hideSkipButton"] as? Boolean ?: false
             val imgArgs: Map<String, Int?> = params["imageSize"]?.asMap() ?: mapOf()
             val w: Int = imgArgs["width"] ?: 1080
@@ -90,9 +90,8 @@ class FlutterSplashView(
                 }
             })
             //step3:创建开屏广告请求参数AdSlot,具体参数含义参考文档
-            val adSlot = TTAdSlotManager.getSplashAdSlot(w, h, isSupportDeepLink);
-            var ttNetworkRequestInfo: TTNetworkRequestInfo;
-            ttNetworkRequestInfo = PangleNetworkRequestInfo("5156773", "887562558");
+            val adSlot = TTAdSlotManager.getSplashAdSlot(w, h, isSupportDeepLink)
+            val ttNetworkRequestInfo: TTNetworkRequestInfo = PangleNetworkRequestInfo("5156773", "887562558")
             //step4:请求广告，调用开屏广告异步请求接口，对请求回调的广告作渲染处理
             mTTSplashAd!!.loadAd(adSlot, ttNetworkRequestInfo, object : TTSplashAdLoadCallback {
                 override fun onSplashAdLoadFail(adError: AdError) {
@@ -115,14 +114,15 @@ class FlutterSplashView(
                     postMessage("onTimeOver")
                 }
             }, tolerateTimeout.toInt())
-          countDownTimer = object : CountDownTimer((exceptionTimeout *  1000).toLong(),1000){
-            override fun onFinish() {
-                postMessage("onTimeOver")
+            countDownTimer = object : CountDownTimer((exceptionTimeout * 1000).toLong(), 1000) {
+                override fun onFinish() {
+                    postMessage("onTimeOver")
+                }
+
+                override fun onTick(millisUntilFinished: Long) {
+                }
             }
-            override fun onTick(millisUntilFinished: Long) {
-            }
-          }
-          countDownTimer.start();
+            countDownTimer.start()
         }
     }
 
@@ -146,7 +146,7 @@ class FlutterSplashView(
     }
 
     override fun dispose() {
-        destroy();
+        destroy()
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -157,7 +157,7 @@ class FlutterSplashView(
     }
 
     private fun postMessage(method: String, arguments: Map<String, Any?> = mapOf()) {
-        countDownTimer.cancel();
+        countDownTimer.cancel()
         methodChannel.invokeMethod(method, arguments)
     }
 }
