@@ -111,6 +111,7 @@ class AndroidSplashConfig implements Config {
   final bool isExpress;
   final bool isSupportDeepLink;
   final PangleExpressSize? expressSize;
+  final OutInfo? outInfo;
 
   /// The splash ad config for Android
   ///
@@ -127,6 +128,7 @@ class AndroidSplashConfig implements Config {
     this.isSupportDeepLink = true,
     this.isExpress = false,
     this.expressSize,
+    this.outInfo,
   });
 
   /// Convert config to json
@@ -139,6 +141,7 @@ class AndroidSplashConfig implements Config {
       'isSupportDeepLink': isSupportDeepLink,
       'isExpress': isExpress,
       'expressSize': expressSize?.toJson(),
+      'outInfo': outInfo?.toJson(),
     };
   }
 }
