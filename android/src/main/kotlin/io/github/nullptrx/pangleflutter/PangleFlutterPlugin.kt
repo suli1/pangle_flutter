@@ -192,7 +192,7 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val slotId = call.argument<String>("slotId")!!
         var mTTAdNative = TTUnifiedNativeAd(activity, slotId) //模板视频
         val adSlot =
-          TTAdSlotManager.getFeedListAdSlot(call)
+          TTAdSlotManager.getFeedListAdSlot(activity,call)
         TTAdManagerHolder.loadFeedListAdV2(mTTAdNative,adSlot,activity,result);
       }
 

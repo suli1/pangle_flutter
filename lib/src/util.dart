@@ -26,6 +26,8 @@ typedef PangleMessageCallback(int code, String message);
 
 typedef PangleOptionCallback(String message, bool enforce);
 
+typedef GromoreOptionCallback(String measuredWidth, String measuredHeight);
+
 class PangleHelper {
   PangleHelper._();
 

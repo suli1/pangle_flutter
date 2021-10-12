@@ -1,5 +1,6 @@
 package io.github.nullptrx.pangleflutter.v2;
 
+import android.app.Activity;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -102,7 +103,7 @@ public class TTAdSlotManager {
     }
 
 
-    public static AdSlot getFeedListAdSlot(MethodCall call){
+    public static AdSlot getFeedListAdSlot(Activity activity, MethodCall call){
 
         TTVideoOption videoOption = VideoOptionUtil.getTTVideoOption();
         AdSlot.Builder builder = new AdSlot.Builder().setTTVideoOption(videoOption);

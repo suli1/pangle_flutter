@@ -117,10 +117,11 @@ class FeedView extends StatefulWidget {
   final PangleOptionCallback? onDislike;
 
   /// 渲染广告成功
-  final VoidCallback? onRenderSuccess;
+  final GromoreOptionCallback? onRenderSuccess;
 
   /// 渲染广告失败
   final PangleMessageCallback? onRenderFail;
+
 }
 
 class _FeedViewState extends State<FeedView>
@@ -236,8 +237,8 @@ class _PlatformCallbacksHandler implements FeedViewPlatformCallbacksHandler {
   }
 
   @override
-  void onRenderSuccess() {
-    _widget.onRenderSuccess?.call();
+  void onRenderSuccess(String measuredWidth ,String measuredHeight) {
+    _widget.onRenderSuccess?.call(measuredWidth, measuredHeight);
   }
 
   @override

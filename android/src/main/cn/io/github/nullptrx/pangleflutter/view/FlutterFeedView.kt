@@ -2,12 +2,12 @@ package io.github.nullptrx.pangleflutter.view
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
-import android.view.Gravity
+import android.os.Build
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
+import android.widget.Toast
 import com.bytedance.msdk.api.AdError
 import com.bytedance.msdk.api.TTAdSize
 import com.bytedance.msdk.api.TTDislikeCallback
@@ -20,7 +20,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import io.github.nullptrx.pangleflutter.PangleAdManager
 import io.github.nullptrx.pangleflutter.util.UIUtils
-import io.github.nullptrx.pangleflutter.util.UIUtils.removeFromParent
 
 
 class FlutterFeedView(
@@ -98,7 +97,7 @@ class FlutterFeedView(
           //获取视频播放view,该view SDK内部渲染，在媒体平台可配置视频是否自动播放等设置。
           val sWidth: Int
           val sHeight: Int
-
+          Toast.makeText(activity, "height:" + height.toInt(), Toast.LENGTH_LONG).show()
           /**
            * 如果存在父布局，需要先从父布局中移除
            */
@@ -119,17 +118,17 @@ class FlutterFeedView(
             container.removeAllViews()
             container.addView(video, layoutParams)
           }
+          container.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                container.viewTreeObserver.removeOnGlobalLayoutListener(this)
+              } else {
+                container.viewTreeObserver.removeGlobalOnLayoutListener(this)
+              }
+              postMessage("onRenderSuccess", mapOf("measuredWidth" to view.measuredWidth.toString(), "measuredHeight" to view.measuredHeight.toString()))
+            }
+          })
 
-//          val expressAdView = ad.expressView
-//          if (expressAdView.parent != null) {
-//            (expressAdView.parent as ViewGroup).removeView(expressAdView)
-//          }
-//          container.removeAllViews()
-//          val params = FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-//            gravity = Gravity.CENTER
-//          }
-//          container.addView(expressAdView, params)
-          postMessage("onRenderSuccess")
         }
       }
     })

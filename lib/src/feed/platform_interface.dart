@@ -69,7 +69,7 @@ abstract class FeedViewPlatformCallbacksHandler {
 
   void onShow();
 
-  void onRenderSuccess();
+  void onRenderSuccess(String measuredWidth,String measuredHeight);
 
   void onRenderFail(int code, String message);
 
