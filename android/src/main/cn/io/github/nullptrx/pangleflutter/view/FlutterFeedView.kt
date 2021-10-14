@@ -127,7 +127,7 @@ class FlutterFeedView(
 
           video.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-              postMessage("onRenderSuccess", mapOf("width" to  video.measuredWidth, "height" to video.measuredHeight))
+              postMessage("onRenderSuccess", mapOf("width" to  video.measuredWidth.toDouble(), "height" to video.measuredHeight.toDouble()))
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 ttNativeAdView.viewTreeObserver.removeOnGlobalLayoutListener(this)
               } else {
