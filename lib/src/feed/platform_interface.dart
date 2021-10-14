@@ -69,11 +69,13 @@ abstract class FeedViewPlatformCallbacksHandler {
 
   void onShow();
 
-  void onRenderSuccess(String measuredWidth,String measuredHeight);
+  void onRenderSuccess();
 
   void onRenderFail(int code, String message);
 
   /// [option]
   /// [enforce] 当enforce参数返回true时，代表穿山甲会主动关闭掉广告，广告移除后需要开发者对界面进行适配。
   void onDislike(String option, bool enforce);
+
+  void onSuccessGlobalLayout(int measuredWidth,int measuredHeight);
 }
