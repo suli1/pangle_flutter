@@ -121,12 +121,13 @@ class FeedView extends StatefulWidget {
 
   /// 渲染广告失败
   final PangleMessageCallback? onRenderFail;
+
 }
 
 class _FeedViewState extends State<FeedView>
     with AutomaticKeepAliveClientMixin {
   final Completer<FeedViewController> _controller =
-      Completer<FeedViewController>();
+  Completer<FeedViewController>();
 
   _PlatformCallbacksHandler? _platformCallbacksHandler;
 
@@ -161,8 +162,8 @@ class _FeedViewState extends State<FeedView>
   }
 
   void _onWebViewPlatformCreated(
-    FeedViewPlatformController feedViewPlatform,
-  ) {
+      FeedViewPlatformController feedViewPlatform,
+      ) {
     final FeedViewController controller = FeedViewController._(
         widget, feedViewPlatform, _platformCallbacksHandler);
     _controller.complete(controller);
@@ -178,10 +179,10 @@ class _FeedViewState extends State<FeedView>
 /// callback for a [FeedView] widget.
 class FeedViewController {
   FeedViewController._(
-    this._widget,
-    this._feedViewPlatformController,
-    this._platformCallbacksHandler,
-  );
+      this._widget,
+      this._feedViewPlatformController,
+      this._platformCallbacksHandler,
+      );
 
   final FeedViewPlatformController _feedViewPlatformController;
 
@@ -245,4 +246,6 @@ class _PlatformCallbacksHandler implements FeedViewPlatformCallbacksHandler {
   void onShow() {
     _widget.onShow?.call();
   }
+
+
 }
