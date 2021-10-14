@@ -31,9 +31,13 @@ internal final class FLTNativeExpressAdTask: FLTTaskProtocol {
         let slot = ABUAdUnit()
         slot.adType = .feed
         slot.position = .feed
-        slot.imgSize = ABUSize(by: .feed228_150)
+        let imgSize1 = ABUSize();
+        imgSize1.width = 1080;
+        imgSize1.height = 1920;
+        slot.imgSize = imgSize1
         slot.adSize = adSize
         slot.id = slotId
+        slot.getExpressAdIfCan = true
     
         let mananger = ABUNativeAdsManager(slot: slot)
         mananger.rootViewController = AppUtil.getCurrentVC()
@@ -53,8 +57,15 @@ internal final class FLTNativeExpressAdTask: FLTTaskProtocol {
             
             self.manager.delegate = delegate
             self.delegate = delegate
-            
-            self.manager.loadAdData(withCount: self.count)
+            //当前配置拉取成功，直接loadAdData
+            if (ABUAdSDKManager.configDidLoad()) {
+                self.manager.loadAdData(withCount: self.count)
+            } else {
+                //当前配置未拉取成功，在成功之后会调用该callback
+                ABUAdSDKManager.addConfigLoadSuccessObserver(self) { _ in
+                    self.manager.loadAdData(withCount: self.count)
+                }
+            }
         }
     }
 }

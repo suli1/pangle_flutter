@@ -25,6 +25,11 @@ internal final class FLTNativeExpressAdViewDelegate: NSObject, ABUNativeAdsManag
             nativeAdViewArray!.forEach {
                 $0.extraDelegate = self
                 $0.extraManager = adsManager
+                $0.delegate = self
+                $0.rootViewController = AppUtil.getCurrentVC()
+                if($0.hasExpressAdGot) {
+                    $0.render()
+                }
             }
             /// 存入缓存
             PangleAdManager.shared.setExpressAd(nativeAdViewArray)
@@ -45,11 +50,10 @@ internal final class FLTNativeExpressAdViewDelegate: NSObject, ABUNativeAdsManag
     }
 
     func nativeAdExpressViewRenderSuccess(_ nativeExpressAdView: ABUNativeAdView) {
-        postMessage(nativeExpressAdView, "onRenderSuccess")
+        postMessage(nativeExpressAdView, "onRenderSuccess", arguments: ["width" : nativeExpressAdView.frame.size.width, "height" : nativeExpressAdView.frame.size.height])
     }
     
     func nativeAdExpressView(_ nativeAdView: ABUNativeAdView, stateDidChanged playerState: ABUPlayerPlayState) {
-        
     }
 
     func nativeAdDidClick(_ nativeAdView: ABUNativeAdView, with view: UIView?) {

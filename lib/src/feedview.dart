@@ -117,7 +117,7 @@ class FeedView extends StatefulWidget {
   final PangleOptionCallback? onDislike;
 
   /// 渲染广告成功
-  final VoidCallback? onRenderSuccess;
+  final PangleMessageRenderSuccessCallback? onRenderSuccess;
 
   /// 渲染广告失败
   final PangleMessageCallback? onRenderFail;
@@ -236,8 +236,9 @@ class _PlatformCallbacksHandler implements FeedViewPlatformCallbacksHandler {
   }
 
   @override
-  void onRenderSuccess() {
-    _widget.onRenderSuccess?.call();
+
+  void onRenderSuccess(double? width, double? height) {
+    _widget.onRenderSuccess?.call(width, height);
   }
 
   @override
