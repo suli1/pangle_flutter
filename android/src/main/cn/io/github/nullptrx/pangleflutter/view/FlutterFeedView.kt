@@ -119,14 +119,15 @@ class FlutterFeedView(
           /**
            * 如果存在父布局，需要先从父布局中移除
            */
-          postMessage("onRenderSuccess")
           UIUtils.removeFromParent(video)
           val layoutParams = FrameLayout.LayoutParams(sWidth, sHeight)
           containerFrameLayout.removeAllViews()
           containerFrameLayout.addView(video, layoutParams)
+          //postMessage("onSuccessGlobalLayout", mapOf("measuredWidth" to  video.width, "measuredHeight" to video.height))
+
           video.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-              postMessage("onSuccessGlobalLayout", mapOf("measuredWidth" to  video.measuredWidth, "measuredHeight" to video.measuredHeight))
+              postMessage("onRenderSuccess", mapOf("measuredWidth" to  video.measuredWidth, "measuredHeight" to video.measuredHeight))
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 ttNativeAdView.viewTreeObserver.removeOnGlobalLayoutListener(this)
               } else {

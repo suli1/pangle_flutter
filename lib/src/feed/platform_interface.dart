@@ -69,7 +69,7 @@ abstract class FeedViewPlatformCallbacksHandler {
 
   void onShow();
 
-  void onRenderSuccess();
+  void onRenderSuccess(int measuredWidth,int measuredHeight);
 
   void onRenderFail(int code, String message);
 
@@ -77,5 +77,4 @@ abstract class FeedViewPlatformCallbacksHandler {
   /// [enforce] 当enforce参数返回true时，代表穿山甲会主动关闭掉广告，广告移除后需要开发者对界面进行适配。
   void onDislike(String option, bool enforce);
 
-  void onSuccessGlobalLayout(int measuredWidth,int measuredHeight);
 }
