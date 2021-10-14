@@ -1,5 +1,6 @@
 package io.github.nullptrx.pangleflutter.v2;
 
+import android.app.Activity;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -103,8 +104,7 @@ public class TTAdSlotManager {
 
 
     public static AdSlot getFeedListAdSlot(MethodCall call){
-
-        TTVideoOption videoOption = VideoOptionUtil.getTTVideoOption();
+        TTVideoOption videoOption = VideoOptionUtil.getTTVideoOption2();
         AdSlot.Builder builder = new AdSlot.Builder().setTTVideoOption(videoOption);
         Boolean isSupportDeepLink = call.argument("isSupportDeepLink");
         if(isSupportDeepLink == null){
@@ -133,8 +133,8 @@ public class TTAdSlotManager {
                         Gravity.RIGHT | Gravity.TOP); // 例如，放在右上角
          */
 
-        AdSlot build = new AdSlot.Builder()
-                .setAdStyleType(1)//必传，表示请求的模板广告还是原生广告，AdSlot.TYPE_EXPRESS_AD：模板广告 ； AdSlot.TYPE_NATIVE_AD：原生广告
+        AdSlot build = builder
+                .setAdStyleType(AdSlot.TYPE_EXPRESS_AD)//必传，表示请求的模板广告还是原生广告，AdSlot.TYPE_EXPRESS_AD：模板广告 ； AdSlot.TYPE_NATIVE_AD：原生广告
                 // 备注
                 // 1:如果是信息流自渲染广告，设置广告图片期望的图片宽高 ，不能为0
                 // 2:如果是信息流模板广告，宽度设置为希望的宽度，高度设置为0(0为高度选择自适应参数)
@@ -181,7 +181,7 @@ public class TTAdSlotManager {
         }
         AdSlot adSlotBuilder = builder
                 .setSupportDeepLink(isSupportDeepLink)
-               .build();
+                .build();
         return adSlotBuilder;
     }
 }

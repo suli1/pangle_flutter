@@ -76,4 +76,5 @@ abstract class FeedViewPlatformCallbacksHandler {
   /// [option]
   /// [enforce] 当enforce参数返回true时，代表穿山甲会主动关闭掉广告，广告移除后需要开发者对界面进行适配。
   void onDislike(String option, bool enforce);
+
 }

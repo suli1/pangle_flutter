@@ -28,6 +28,7 @@ typedef PangleOptionCallback(String message, bool enforce);
 
 typedef PangleMessageRenderSuccessCallback(double? width, double? height);
 
+
 class PangleHelper {
   PangleHelper._();
 
