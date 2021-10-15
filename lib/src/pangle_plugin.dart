@@ -142,13 +142,14 @@ class PanglePlugin {
     IOSConfig? iOS,
     AndroidConfig? android,
   }) async {
-    Map<String, dynamic>? result;
-    if (Platform.isIOS && iOS != null) {
-      result = await _methodChannel.invokeMapMethod('init', iOS.toJSON());
-    } else if (Platform.isAndroid && android != null) {
-      result = await _methodChannel.invokeMapMethod('init', android.toJSON());
-    }
-    return PangleResult.fromJson(result);
+    // Map<String, dynamic>? result;
+    // if (Platform.isIOS && iOS != null) {
+    //   result = await _methodChannel.invokeMapMethod('init', iOS.toJSON());
+    // } else if (Platform.isAndroid && android != null) {
+    //   result = await _methodChannel.invokeMapMethod('init', android.toJSON());
+    // }
+    // return PangleResult.fromJson(result);
+    return PangleResult(code: -1, message: 'No implements');
   }
 
   /// Load splash ad datas.
