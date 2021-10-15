@@ -131,9 +131,9 @@ class FlutterFeedView(
             override fun onGlobalLayout() {
               val height: Double
               if(widthParam != null){
-                height =  video.height * widthParam!! /  video.width;
+                height =  video.measuredHeight * widthParam!! /  video.measuredWidth;
               }else{
-                height = video.height.toDouble();
+                height = video.measuredHeight.toDouble();
               }
               postMessage("onRenderSuccess", mapOf("width" to  video.measuredWidth.toDouble(), "height" to height))
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
