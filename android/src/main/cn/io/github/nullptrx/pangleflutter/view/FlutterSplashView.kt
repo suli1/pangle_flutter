@@ -94,9 +94,9 @@ class FlutterSplashView(
 
             var ttNetworkRequestInfo: TTNetworkRequestInfo? = null
 
-            if(outInfo.isNotEmpty()){
-                val outAppId : String = outInfo["appId"]!!
-                val outSlotId : String = outInfo["slotId"]!!
+            if (outInfo.isNotEmpty()) {
+                val outAppId: String = outInfo["appId"]!!
+                val outSlotId: String = outInfo["slotId"]!!
                 ttNetworkRequestInfo = PangleNetworkRequestInfo(outAppId, outSlotId)
             }
             //step4:请求广告，调用开屏广告异步请求接口，对请求回调的广告作渲染处理

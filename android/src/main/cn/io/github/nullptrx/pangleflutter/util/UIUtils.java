@@ -119,12 +119,9 @@ public class UIUtils {
      * @return
      */
     public static boolean hasNotchScreen(Activity activity) {
-        if (getInt("ro.miui.notch", activity) == 1 || hasNotchAtHuawei(activity) || hasNotchAtOPPO(activity)
-                || hasNotchAtVivo(activity) || isAndroidPHasNotch(activity)) { //TODO 各种品牌
-            return true;
-        }
-
-        return false;
+        //TODO 各种品牌
+        return getInt("ro.miui.notch", activity) == 1 || hasNotchAtHuawei(activity) || hasNotchAtOPPO(activity)
+                || hasNotchAtVivo(activity) || isAndroidPHasNotch(activity);
     }
 
     /**
@@ -171,7 +168,7 @@ public class UIUtils {
                 Method getInt = SystemProperties.getMethod("getInt", paramTypes);
                 //参数
                 Object[] params = new Object[2];
-                params[0] = new String(key);
+                params[0] = key;
                 params[1] = new Integer(0);
                 result = (Integer) getInt.invoke(SystemProperties, params);
 

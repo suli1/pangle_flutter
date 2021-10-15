@@ -6,18 +6,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.bytedance.msdk.adapter.pangle.PangleNetworkRequestInfo;
-import com.bytedance.msdk.adapter.util.Logger;
 import com.bytedance.msdk.api.AdError;
 import com.bytedance.msdk.api.AdSlot;
 import com.bytedance.msdk.api.TTAdConfig;
 import com.bytedance.msdk.api.TTAdConstant;
 import com.bytedance.msdk.api.TTMediationAdSdk;
-import com.bytedance.msdk.api.TTNetworkRequestInfo;
 import com.bytedance.msdk.api.TTPrivacyConfig;
-import com.bytedance.msdk.api.UserInfoForSegment;
 import com.bytedance.msdk.api.fullVideo.TTFullVideoAd;
 import com.bytedance.msdk.api.fullVideo.TTFullVideoAdListener;
 import com.bytedance.msdk.api.fullVideo.TTFullVideoAdLoadCallback;
@@ -43,9 +38,7 @@ import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel;
 import io.github.nullptrx.pangleflutter.PangleAdManager;
-import io.github.nullptrx.pangleflutter.bean.FeedBeanWrap;
 import io.github.nullptrx.pangleflutter.common.PangleLoadingType;
-import io.github.nullptrx.pangleflutter.util.CodeUtil;
 
 
 /**
@@ -77,8 +70,8 @@ public class TTAdManagerHolder {
      * @param context 上下文
      * @param map     桥接参数
      */
-    public static void init(Context context, Map<String, Object> map,MethodChannel.Result result) {
-        doInit(context, map,result);
+    public static void init(Context context, Map<String, Object> map, MethodChannel.Result result) {
+        doInit(context, map, result);
     }
 
     public static void initUnitySdkBanner(Activity activity) {
@@ -87,22 +80,22 @@ public class TTAdManagerHolder {
 
 
     //step1:接入网盟广告sdk的初始化操作，详情见接入文档和穿山甲平台说明
-    private static void doInit(Context context, Map<String, Object> map,MethodChannel.Result result) {
+    private static void doInit(Context context, Map<String, Object> map, MethodChannel.Result result) {
         if (!sInit) {
             sInit = true;
             TTAdConfig ttAdConfig = buildConfig(context, map);
-            if(ttAdConfig == null){
+            if (ttAdConfig == null) {
                 HashMap<String, Object> resultMap = new HashMap<>();
-                resultMap.put("code",-1);
-                resultMap.put("message","init error");
+                resultMap.put("code", -1);
+                resultMap.put("message", "init error");
                 result.success(resultMap);
                 return;
             }
             TTMediationAdSdk.initialize(context, buildConfig(context, map));
         }
         HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("code",0);
-        resultMap.put("message","init success");
+        resultMap.put("code", 0);
+        resultMap.put("message", "init success");
         result.success(resultMap);
         //Toast.makeText(context,"init",Toast.LENGTH_LONG).show();;
     }
@@ -233,7 +226,6 @@ public class TTAdManagerHolder {
     }
 
 
-
     public static void loadRewardVideoAdV2(@NotNull TTRewardAd mttRewardAd, @Nullable AdSlot rewardAdSlot, final Activity activity, final MethodChannel.Result result) {
 
         final boolean[] verify = {false};
@@ -255,7 +247,7 @@ public class TTAdManagerHolder {
              */
             @Override
             public void onRewardedAdShowFail(AdError adError) {
-             
+
             }
 
             /**
@@ -272,9 +264,9 @@ public class TTAdManagerHolder {
              */
             public void onRewardedAdClosed() {
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("code",0);
+                map.put("code", 0);
                 map.put("message", "success");
-                map.put("verify",true);
+                map.put("verify", true);
                 result.success(map);
             }
 
@@ -316,7 +308,7 @@ public class TTAdManagerHolder {
     }
 
     public static void loadInterstitialAdV2(@NotNull final TTInterstitialAd mInterstitialAd, @Nullable AdSlot interstitialAdSlot
-            ,final  Activity mContext,final MethodChannel.Result result) {
+            , final Activity mContext, final MethodChannel.Result result) {
         //请求广告，调用插屏广告异步请求接口
         mInterstitialAd.loadAd(interstitialAdSlot, new TTInterstitialAdLoadCallback() {
             @Override
@@ -343,8 +335,8 @@ public class TTAdManagerHolder {
                     public void onInterstitialShowFail(AdError adError) {
                         HashMap<String, Object> map = new HashMap<>();
                         map.put("code", adError.code);
-                        map.put("message",adError.message);
-                        map.put("verify",false);
+                        map.put("message", adError.message);
+                        map.put("verify", false);
                         result.success(map);
                     }
 
@@ -390,16 +382,16 @@ public class TTAdManagerHolder {
         });
     }
 
-    public static void loadFullVideoAdV2(@NotNull final TTFullVideoAd mTTFullVideoAd, @Nullable AdSlot fullVideoAdSlot, PangleLoadingType loadingType, final  Activity activity,final MethodChannel.Result result) {
-        if (PangleLoadingType.preload_only == loadingType ) {
+    public static void loadFullVideoAdV2(@NotNull final TTFullVideoAd mTTFullVideoAd, @Nullable AdSlot fullVideoAdSlot, PangleLoadingType loadingType, final Activity activity, final MethodChannel.Result result) {
+        if (PangleLoadingType.preload_only == loadingType) {
             //只是预加载
             mTTFullVideoAd.loadFullAd(fullVideoAdSlot, new TTFullVideoAdLoadCallback() {
 
                 @Override
                 public void onFullVideoLoadFail(AdError adError) {
                     HashMap<String, Object> map = new HashMap<>();
-                    map.put("code",-1);
-                    map.put("message",adError.message + " pro");
+                    map.put("code", -1);
+                    map.put("message", adError.message + " pro");
                     result.success(map);
                 }
 
@@ -413,7 +405,7 @@ public class TTAdManagerHolder {
 
                 }
             });
-        }else{
+        } else {
             mTTFullVideoAd.loadFullAd(fullVideoAdSlot, new TTFullVideoAdLoadCallback() {
                 @Override
                 public void onFullVideoLoadFail(AdError adError) {
@@ -427,13 +419,13 @@ public class TTAdManagerHolder {
 
                 @Override
                 public void onFullVideoCached() {
-                    mTTFullVideoAd.showFullAd(activity,  listenerFull(result));
+                    mTTFullVideoAd.showFullAd(activity, listenerFull(result));
                 }
             });
         }
     }
 
-    public static TTFullVideoAdListener listenerFull(final MethodChannel.Result result){
+    public static TTFullVideoAdListener listenerFull(final MethodChannel.Result result) {
 
         final int[] code = {0};
         final String[] message = {"success"};
@@ -463,8 +455,8 @@ public class TTAdManagerHolder {
             @Override
             public void onFullVideoAdClosed() {
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("code",code[0]);
-                map.put("message",message[0]);
+                map.put("code", code[0]);
+                map.put("message", message[0]);
                 result.success(map);
             }
 
@@ -486,24 +478,24 @@ public class TTAdManagerHolder {
         };
     }
 
-    public static void loadFeedListAdV2(@NotNull final TTUnifiedNativeAd mTTAdNative, @NotNull AdSlot adSlot, Activity activity,final MethodChannel.Result result) {
+    public static void loadFeedListAdV2(@NotNull final TTUnifiedNativeAd mTTAdNative, @NotNull AdSlot adSlot, Activity activity, final MethodChannel.Result result) {
 
         mTTAdNative.loadAd(adSlot, new TTNativeAdLoadCallback() {
             @Override
             public void onAdLoaded(List<TTNativeAd> ads) {
                 if (ads == null || ads.isEmpty()) {
                     HashMap<String, Object> map = new HashMap<>();
-                    map.put("code",-1);
-                    map.put("message","ads = null");
+                    map.put("code", -1);
+                    map.put("message", "ads = null");
                     result.success(map);
                     return;
                 }
                 ArrayList<String> datas = (ArrayList<String>) PangleAdManager.Companion.getShared().setExpressAdV2(ads);
                 //广告加载成功 ads
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("code",0);
-                map.put("count",ads.size());
-                map.put("data",datas);
+                map.put("code", 0);
+                map.put("count", ads.size());
+                map.put("data", datas);
                 result.success(map);
             }
 
@@ -511,8 +503,8 @@ public class TTAdManagerHolder {
             public void onAdLoadedFial(AdError adError) {
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("code", adError.code);
-                map.put("message",adError.message);
-                map.put("verify",false);
+                map.put("message", adError.message);
+                map.put("verify", false);
                 result.success(map);
             }
         });

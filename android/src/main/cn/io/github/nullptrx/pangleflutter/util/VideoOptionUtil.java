@@ -1,6 +1,5 @@
 package io.github.nullptrx.pangleflutter.util;
 
-import com.bytedance.msdk.api.BaiduExtraOptions;
 import com.bytedance.msdk.api.GDTExtraOption;
 import com.bytedance.msdk.api.TTVideoOption;
 

@@ -1,10 +1,7 @@
 package io.github.nullptrx.pangleflutter.v2.delegate
 
 import android.app.Activity
-import android.view.View
 import android.widget.FrameLayout
-import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
 import com.bytedance.msdk.api.AdError
 import com.bytedance.msdk.api.splash.TTSplashAd
 import com.bytedance.msdk.api.splash.TTSplashAdLoadCallback
@@ -14,9 +11,9 @@ import io.github.nullptrx.pangleflutter.dialog.SupportSplashDialog
 
 internal class FLTSplashAdV2(
     val ttSplashAd: TTSplashAd,
-        val hideSkipButton: Boolean?,
-        var activity: Activity?,
-        var result: (Any) -> Unit = {}
+    val hideSkipButton: Boolean?,
+    var activity: Activity?,
+    var result: (Any) -> Unit = {}
 ) : TTSplashAdLoadCallback {
     private var supportDialog: SupportSplashDialog? = null
     private var nativeDialog: NativeSplashDialog? = null

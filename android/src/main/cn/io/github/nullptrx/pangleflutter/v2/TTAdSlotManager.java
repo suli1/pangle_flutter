@@ -1,29 +1,22 @@
 package io.github.nullptrx.pangleflutter.v2;
 
-import android.app.Activity;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 
-import com.bytedance.msdk.adapter.util.UIUtils;
 import com.bytedance.msdk.api.AdSlot;
 import com.bytedance.msdk.api.TTAdConstant;
 import com.bytedance.msdk.api.TTVideoOption;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
 import io.github.nullptrx.pangleflutter.PangleAdManager;
-import io.github.nullptrx.pangleflutter.common.PangleOrientation;
 import io.github.nullptrx.pangleflutter.util.VideoOptionUtil;
 
 
 public class TTAdSlotManager {
 
 
-    public static AdSlot getSplashAdSlot(int width, int height ,boolean supportDeepLink){
+    public static AdSlot getSplashAdSlot(int width, int height, boolean supportDeepLink) {
         TTVideoOption videoOption = VideoOptionUtil.getSplashProLoadTTVideoOption();
         AdSlot build = new AdSlot.Builder()
                 .setTTVideoOption(videoOption)
@@ -35,9 +28,9 @@ public class TTAdSlotManager {
         return build;
     }
 
-    public static AdSlot getInterstitialAdAdSlot(Float width,Float height,boolean supportDeepLink){
+    public static AdSlot getInterstitialAdAdSlot(Float width, Float height, boolean supportDeepLink) {
 
-        TTVideoOption videoOption =  VideoOptionUtil.getTTVideoOption();
+        TTVideoOption videoOption = VideoOptionUtil.getTTVideoOption();
         AdSlot build = new AdSlot.Builder()
                 .setAdStyleType(AdSlot.TYPE_EXPRESS_AD) // 注意：插屏暂时支持模版类型，必须手动设置为AdSlot.TYPE_EXPRESS_AD
                 .setTTVideoOption(videoOption)
@@ -48,7 +41,7 @@ public class TTAdSlotManager {
     }
 
 
-    public static AdSlot getRewardAdSlot(MethodCall call){
+    public static AdSlot getRewardAdSlot(MethodCall call) {
         TTVideoOption videoOption = new TTVideoOption.Builder()
                 .setMuted(true)//对所有SDK的激励广告生效，除需要在平台配置的SDK，如穿山甲SDK
                 .setAdmobAppVolume(0f)//配合Admob的声音大小设置[0-1]
@@ -56,15 +49,15 @@ public class TTAdSlotManager {
 
         AdSlot.Builder builder = new AdSlot.Builder().setTTVideoOption(videoOption);
         String userId = call.argument("userId");
-        if(!TextUtils.isEmpty(userId)){
+        if (!TextUtils.isEmpty(userId)) {
             builder.setUserID(userId);
         }
         String rewardName = call.argument("rewardName");
-        if(!TextUtils.isEmpty(rewardName)){
+        if (!TextUtils.isEmpty(rewardName)) {
             builder.setRewardName(rewardName);
         }
         Integer rewardAmount = call.argument("rewardAmount");
-        if(!TextUtils.isEmpty(rewardName)){
+        if (!TextUtils.isEmpty(rewardName)) {
             builder.setRewardAmount(rewardAmount == null ? 0 : rewardAmount);
         }
         String extra = call.argument("extra");
@@ -72,16 +65,16 @@ public class TTAdSlotManager {
         builder.setOrientation((isVertical == null || isVertical) ? TTAdConstant.VERTICAL : TTAdConstant.HORIZONTAL);
         Boolean isSupportDeepLink = call.argument("isSupportDeepLink");
         Map<String, Double> expressArgs = call.argument("expressSize");
-        if(expressArgs != null){
+        if (expressArgs != null) {
             Double w = expressArgs.get("width");
-            if(w == null){
+            if (w == null) {
                 w = 0.00;
             }
             Double h = expressArgs.get("height");
-            if(h == null){
+            if (h == null) {
                 h = 0.00;
             }
-            builder.setImageAdSize(w.intValue(),h.intValue());
+            builder.setImageAdSize(w.intValue(), h.intValue());
         }
         /*
         // current unused
@@ -104,27 +97,27 @@ public class TTAdSlotManager {
     }
 
 
-    public static AdSlot getFeedListAdSlot(MethodCall call){
+    public static AdSlot getFeedListAdSlot(MethodCall call) {
         TTVideoOption videoOption = VideoOptionUtil.getTTVideoOption2();
         AdSlot.Builder builder = new AdSlot.Builder().setTTVideoOption(videoOption);
         Boolean isSupportDeepLink = call.argument("isSupportDeepLink");
-        if(isSupportDeepLink == null){
+        if (isSupportDeepLink == null) {
             isSupportDeepLink = false;
         }
         Map<String, Double> expressArgs = call.argument("expressSize");
-        if(expressArgs != null){
+        if (expressArgs != null) {
             Double w = expressArgs.get("width");
-            if(w == null){
+            if (w == null) {
                 w = 0.00;
             }
             Double h = expressArgs.get("height");
-            if(h == null){
+            if (h == null) {
                 h = 0.00;
             }
-            builder.setImageAdSize(w.intValue(),h.intValue());// 必选参数 单位dp ，详情见上面备注解释
+            builder.setImageAdSize(w.intValue(), h.intValue());// 必选参数 单位dp ，详情见上面备注解释
         }
         PangleAdManager.Companion.getShared().setExpressSize(expressArgs);
-        Integer count =  call.argument("count");
+        Integer count = call.argument("count");
 
         /*
         // 针对Gdt Native自渲染广告，可以自定义gdt logo的布局参数。该参数可选,非必须。
@@ -148,38 +141,38 @@ public class TTAdSlotManager {
     }
 
 
-    public static AdSlot getFullVideoAdSlot(MethodCall call){
+    public static AdSlot getFullVideoAdSlot(MethodCall call) {
         TTVideoOption videoOption = VideoOptionUtil.getTTVideoOption();
         AdSlot.Builder builder = new AdSlot.Builder().setTTVideoOption(videoOption);
         Integer orientationIndex = call.argument("orientation");
-        if(orientationIndex == null){
+        if (orientationIndex == null) {
             builder.setOrientation(TTAdConstant.VERTICAL);
-        }else{
-            if(orientationIndex == 0 || orientationIndex == 1){
+        } else {
+            if (orientationIndex == 0 || orientationIndex == 1) {
                 builder.setOrientation(TTAdConstant.VERTICAL);
-            }else{
+            } else {
                 builder.setOrientation(TTAdConstant.HORIZONTAL);
             }
         }
         String userId = call.argument("userId");
-        if(!TextUtils.isEmpty(userId)){
+        if (!TextUtils.isEmpty(userId)) {
             builder.setUserID(userId);
         }
         Boolean isSupportDeepLink = call.argument("isSupportDeepLink");
-        if(isSupportDeepLink == null){
+        if (isSupportDeepLink == null) {
             isSupportDeepLink = false;
         }
         Map<String, Double> expressArgs = call.argument("expressSize");
-        if(expressArgs != null){
+        if (expressArgs != null) {
             Double w = expressArgs.get("width");
-            if(w == null){
+            if (w == null) {
                 w = 0.00;
             }
             Double h = expressArgs.get("height");
-            if(h == null){
+            if (h == null) {
                 h = 0.00;
             }
-            builder.setImageAdSize(w.intValue(),h.intValue());
+            builder.setImageAdSize(w.intValue(), h.intValue());
         }
         AdSlot adSlotBuilder = builder
                 .setSupportDeepLink(isSupportDeepLink)

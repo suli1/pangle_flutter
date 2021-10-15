@@ -15,39 +15,43 @@ import java.lang.reflect.Field
 
 class NativeSplashDialog : DialogFragment() {
 
-  private lateinit var layoutView: View
-  private lateinit var ctx: Context
+    private lateinit var layoutView: View
+    private lateinit var ctx: Context
 
-  override fun onAttach(context: Context) {
-    super.onAttach(context)
-    ctx = context
-  }
-
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return DialogUtil.createDialog(ctx)
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    return layoutView
-  }
-
-
-  override fun onSaveInstanceState(outState: Bundle?) {
-  }
-
-  fun show(manager: FragmentManager, view: View) {
-    layoutView = view
-    try {
-      val mDismissed: Field = DialogFragment::class.java.getDeclaredField("mDismissed")
-      mDismissed.isAccessible = true
-      mDismissed.set(this, false)
-      val mShownByMe: Field = DialogFragment::class.java.getDeclaredField("mShownByMe")
-      mShownByMe.isAccessible = true
-      mShownByMe.set(this, true)
-    } catch (_: Exception) {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        ctx = context
     }
-    val ft: FragmentTransaction = manager.beginTransaction()
-    ft.add(this, javaClass.simpleName)
-    ft.commitAllowingStateLoss()
-  }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return DialogUtil.createDialog(ctx)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return layoutView
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+    }
+
+    fun show(manager: FragmentManager, view: View) {
+        layoutView = view
+        try {
+            val mDismissed: Field = DialogFragment::class.java.getDeclaredField("mDismissed")
+            mDismissed.isAccessible = true
+            mDismissed.set(this, false)
+            val mShownByMe: Field = DialogFragment::class.java.getDeclaredField("mShownByMe")
+            mShownByMe.isAccessible = true
+            mShownByMe.set(this, true)
+        } catch (_: Exception) {
+        }
+        val ft: FragmentTransaction = manager.beginTransaction()
+        ft.add(this, javaClass.simpleName)
+        ft.commitAllowingStateLoss()
+    }
 }
