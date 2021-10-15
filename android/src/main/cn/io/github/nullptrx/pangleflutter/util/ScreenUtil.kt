@@ -59,11 +59,11 @@ object ScreenUtil {
         //for new api versions.
         val decorView = activity.window.decorView
         val uiOptions = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-            //                    | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-            or View.SYSTEM_UI_FLAG_IMMERSIVE)
+          or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+          or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+          or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+          //                    | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+          or View.SYSTEM_UI_FLAG_IMMERSIVE)
         decorView.systemUiVisibility = uiOptions
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
       }
@@ -81,7 +81,8 @@ object ScreenUtil {
   //获取状态栏高度
   fun getStatusBarHeight(): Float {
     var height = 0f
-    val resourceId = Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android")
+    val resourceId =
+      Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android")
     if (resourceId > 0) {
       height = Resources.getSystem().getDimensionPixelSize(resourceId).toFloat()
     }
@@ -100,8 +101,11 @@ object ScreenUtil {
    * @return
    */
   fun hasNotchScreen(context: Context): Boolean {
-    return (getInt("ro.miui.notch", context) == 1 || hasNotchAtHuawei(context) || hasNotchAtOPPO(context)
-        || hasNotchAtVivo(context) || isAndroidPHasNotch())
+    return (getInt(
+      "ro.miui.notch",
+      context
+    ) == 1 || hasNotchAtHuawei(context) || hasNotchAtOPPO(context)
+      || hasNotchAtVivo(context) || isAndroidPHasNotch())
   }
 
   /**
@@ -130,7 +134,10 @@ object ScreenUtil {
    * @return 0 if it is not notch ; return 1 means notch
    * @throws IllegalArgumentException if the key exceeds 32 characters
    */
-  fun getInt(key: String, context: Context): Int {
+  fun getInt(
+    key: String,
+    context: Context
+  ): Int {
     var result = 0
     if (isMiui()) {
       try {
@@ -183,7 +190,6 @@ object ScreenUtil {
   const val VIVO_NOTCH = 0x00000020 //是否有刘海
 
   const val VIVO_FILLET = 0x00000008 //是否有圆角
-
 
   /**
    * VIVO刘海屏判断

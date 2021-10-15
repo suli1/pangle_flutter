@@ -1,17 +1,7 @@
 package io.github.nullptrx.pangleflutter
 
-import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageInfo
 import com.bytedance.msdk.api.nativeAd.TTNativeAd
-import io.github.nullptrx.pangleflutter.common.PangleLoadingType
-import io.github.nullptrx.pangleflutter.common.PangleTitleBarTheme
-import io.github.nullptrx.pangleflutter.common.TTSizeF
-import io.github.nullptrx.pangleflutter.delegate.*
-import io.github.nullptrx.pangleflutter.util.asList
-import io.github.nullptrx.pangleflutter.util.asMap
-import java.util.*
-
+import java.util.Collections
 
 class PangleAdManager {
 
@@ -22,12 +12,15 @@ class PangleAdManager {
   private val expressAdCollec1tionV2 =
     Collections.synchronizedMap(mutableMapOf<String, TTNativeAd>())
 
+  private var expressSize: Map<String, Double>? = null
 
-    get() = field
+  fun setExpressSize(map: Map<String, Double>?) {
+    expressSize = map
+  }
 
-
-
-
+  fun getExpressSize(): Map<String, Double>? {
+    return expressSize
+  }
 
   /**
    * Express
@@ -46,8 +39,6 @@ class PangleAdManager {
     return expressAdCollec1tionV2[key]
   }
 
-
-
   fun removeExpressAdV2(key: String): Boolean {
     if (expressAdCollec1tionV2.containsKey(key)) {
       val it = expressAdCollec1tionV2.remove(key)
@@ -56,7 +47,5 @@ class PangleAdManager {
     }
     return false
   }
-
-
 }
 

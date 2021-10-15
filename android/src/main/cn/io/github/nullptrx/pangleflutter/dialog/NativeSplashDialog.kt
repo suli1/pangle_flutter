@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import io.github.nullptrx.pangleflutter.util.DialogUtil
 import java.lang.reflect.Field
 
-
 class NativeSplashDialog : DialogFragment() {
 
   private lateinit var layoutView: View
@@ -27,15 +26,21 @@ class NativeSplashDialog : DialogFragment() {
     return DialogUtil.createDialog(ctx)
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     return layoutView
   }
-
 
   override fun onSaveInstanceState(outState: Bundle?) {
   }
 
-  fun show(manager: FragmentManager, view: View) {
+  fun show(
+    manager: FragmentManager,
+    view: View
+  ) {
     layoutView = view
     try {
       val mDismissed: Field = DialogFragment::class.java.getDeclaredField("mDismissed")

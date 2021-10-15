@@ -9,16 +9,20 @@ import io.flutter.plugin.platform.PlatformViewFactory
 import io.github.nullptrx.pangleflutter.util.asMap
 import java.lang.ref.WeakReference
 
-class SplashViewFactory(val messenger: BinaryMessenger) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+class SplashViewFactory(val messenger: BinaryMessenger) :
+  PlatformViewFactory(StandardMessageCodec.INSTANCE) {
 
   private var activity: WeakReference<Activity>? = null
 
-  override fun create(context: Context, id: Int, args: Any?): PlatformView? {
+  override fun create(
+    context: Context,
+    id: Int,
+    args: Any?
+  ): PlatformView? {
     val params = args?.asMap<String, Any?>() ?: mutableMapOf()
     val act = activity?.get() ?: return null
     return FlutterSplashView(act, messenger, id, params)
   }
-
 
   fun attachActivity(activity: Activity) {
     this.activity = WeakReference(activity)
@@ -28,5 +32,4 @@ class SplashViewFactory(val messenger: BinaryMessenger) : PlatformViewFactory(St
     this.activity?.clear()
     this.activity = null
   }
-
 }

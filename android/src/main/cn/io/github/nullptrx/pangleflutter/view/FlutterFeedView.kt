@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import com.bytedance.msdk.api.AdError
 import com.bytedance.msdk.api.TTAdSize
 import com.bytedance.msdk.api.TTDislikeCallback
@@ -20,9 +19,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import io.github.nullptrx.pangleflutter.PangleAdManager
-import io.github.nullptrx.pangleflutter.R
+import io.github.nullptrx.pangleflutter.PangleAdManager.Companion.shared
 import io.github.nullptrx.pangleflutter.util.UIUtils
-
 
 class FlutterFeedView(
   val activity: Activity,
@@ -31,23 +29,32 @@ class FlutterFeedView(
   params: Map<String, Any?>
 ) : PlatformView, MethodChannel.MethodCallHandler {
 
-  private val methodChannel: MethodChannel = MethodChannel(messenger, "nullptrx.github.io/pangle_feedview_$id")
+  private val methodChannel: MethodChannel =
+    MethodChannel(messenger, "nullptrx.github.io/pangle_feedview_$id")
   private val ttNativeAdView: TTNativeAdView
   private var ttadId: String = ""
-  private var  containerFrameLayout : FrameLayout;
-  private lateinit var video : View;
+  private var containerFrameLayout: FrameLayout
+  private lateinit var video: View
+  private var widthParam: Double? = null
 
   init {
     methodChannel.setMethodCallHandler(this)
     val context: Context = activity
     //广告view的父类仍然必须是 com.bytedance.msdk.api.format.TTNativeAdView
-    ttNativeAdView = TTNativeAdView(context);
-    val layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-    layoutParams.gravity = Gravity.TOP;
+    ttNativeAdView = TTNativeAdView(context)
+    val layoutParams = FrameLayout.LayoutParams(
+      FrameLayout.LayoutParams.MATCH_PARENT,
+      FrameLayout.LayoutParams.MATCH_PARENT
+    )
+    layoutParams.gravity = Gravity.TOP
     containerFrameLayout = FrameLayout(context)
-    containerFrameLayout.layoutParams = layoutParams;
-    ttNativeAdView.addView(containerFrameLayout);
+    containerFrameLayout.layoutParams = layoutParams
+    ttNativeAdView.addView(containerFrameLayout)
     ttadId = params["id"] as String
+    val expressArgs: Map<String, Double>? = shared.getExpressSize()
+    if (expressArgs != null) {
+      widthParam = expressArgs["width"]
+    }
     loadAd(ttadId)
   }
 
@@ -66,12 +73,14 @@ class FlutterFeedView(
     //判断是否存在dislike按钮
     if (ad.hasDislike()) {
       ad.setDislikeCallback(activity, object : TTDislikeCallback {
-        override fun onSelected(position: Int, value: String) {
+        override fun onSelected(
+          position: Int,
+          value: String
+        ) {
           postMessage("onDislike", mapOf("option" to value))
         }
 
         override fun onCancel() {
-
         }
 
         /**
@@ -79,6 +88,7 @@ class FlutterFeedView(
          */
         override fun onRefuse() {
         }
+
         override fun onShow() {
         }
       })
@@ -94,12 +104,19 @@ class FlutterFeedView(
       override fun onAdShow() {
       }
 
-      override fun onRenderFail(view: View, msg: String, code: Int) {
+      override fun onRenderFail(
+        view: View,
+        msg: String,
+        code: Int
+      ) {
         postMessage("onError", mapOf("message" to msg, "code" to code))
       }
 
       // ** 注意点 ** 不要在广告加载成功回调里进行广告view展示，要在onRenderSucces进行广告view展示，否则会导致广告无法展示。
-      override fun onRenderSuccess(width: Float, height: Float) {
+      override fun onRenderSuccess(
+        width: Float,
+        height: Float
+      ) {
         //回调渲染成功后将模板布局添加的父View中
         //获取视频播放view,该view SDK内部渲染，在媒体平台可配置视频是否自动播放等设置。
         val sWidth: Int
@@ -123,11 +140,19 @@ class FlutterFeedView(
           val layoutParams = FrameLayout.LayoutParams(sWidth, sHeight)
           containerFrameLayout.removeAllViews()
           containerFrameLayout.addView(video, layoutParams)
-          //postMessage("onSuccessGlobalLayout", mapOf("measuredWidth" to  video.width, "measuredHeight" to video.height))
-
-          video.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
+          video.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-              postMessage("onRenderSuccess", mapOf("width" to  video.measuredWidth.toDouble(), "height" to video.measuredHeight.toDouble()))
+              val height: Double
+              if (widthParam != null) {
+                height = video.measuredHeight * widthParam!! / video.measuredWidth
+              } else {
+                height = video.measuredHeight.toDouble()
+              }
+              postMessage(
+                "onRenderSuccess",
+                mapOf("width" to video.measuredWidth.toDouble(), "height" to height)
+              )
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 ttNativeAdView.viewTreeObserver.removeOnGlobalLayoutListener(this)
               } else {
@@ -139,9 +164,7 @@ class FlutterFeedView(
       }
     })
 
-
     //视频广告设置播放状态回调（可选）
-
 
     //视频广告设置播放状态回调（可选）
     ad.setTTVideoListener(object : TTVideoListener {
@@ -162,14 +185,18 @@ class FlutterFeedView(
     })
 
     ad.render()
-
   }
 
-  override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+  override fun onMethodCall(
+    call: MethodCall,
+    result: MethodChannel.Result
+  ) {
   }
 
-
-  private fun postMessage(method: String, arguments: Map<String, Any?> = mapOf()) {
+  private fun postMessage(
+    method: String,
+    arguments: Map<String, Any?> = mapOf()
+  ) {
     methodChannel.invokeMethod(method, arguments)
   }
 }

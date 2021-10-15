@@ -26,14 +26,21 @@ class SupportSplashDialog : DialogFragment() {
     return DialogUtil.createDialog(ctx)
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     return layoutView
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
   }
 
-  fun show(manager: FragmentManager, view: View) {
+  fun show(
+    manager: FragmentManager,
+    view: View
+  ) {
     layoutView = view
     try {
       val mDismissed: Field = DialogFragment::class.java.getDeclaredField("mDismissed")

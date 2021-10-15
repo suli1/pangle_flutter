@@ -11,13 +11,17 @@ import io.flutter.plugin.platform.PlatformView
 import io.github.nullptrx.pangleflutter.common.TTSize
 import io.github.nullptrx.pangleflutter.util.asMap
 
-class FlutterNativeBannerView(val context: Context, messenger: BinaryMessenger, val id: Int, params: Map<String, Any?>) : PlatformView, MethodChannel.MethodCallHandler
-{
+class FlutterNativeBannerView(
+  val context: Context,
+  messenger: BinaryMessenger,
+  val id: Int,
+  params: Map<String, Any?>
+) : PlatformView, MethodChannel.MethodCallHandler {
 
-  private val methodChannel: MethodChannel = MethodChannel(messenger, "nullptrx.github.io/pangle_nativebannerview_$id")
+  private val methodChannel: MethodChannel =
+    MethodChannel(messenger, "nullptrx.github.io/pangle_nativebannerview_$id")
   private val container: FrameLayout
   private var interval: Int? = null
-
 
   init {
     methodChannel.setMethodCallHandler(this)
@@ -28,7 +32,6 @@ class FlutterNativeBannerView(val context: Context, messenger: BinaryMessenger, 
 
       val isSupportDeepLink = params["isSupportDeepLink"] as? Boolean ?: true
       interval = params["interval"] as Int?
-
 
       val expressArgs: Map<String, Double> = params["size"]?.asMap() ?: mapOf()
       val w: Int = expressArgs.getValue("width").toInt()
@@ -46,12 +49,16 @@ class FlutterNativeBannerView(val context: Context, messenger: BinaryMessenger, 
     container.removeAllViews()
   }
 
-
-
-  override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+  override fun onMethodCall(
+    call: MethodCall,
+    result: MethodChannel.Result
+  ) {
   }
 
-  private fun postMessage(method: String, arguments: Map<String, Any?> = mapOf()) {
+  private fun postMessage(
+    method: String,
+    arguments: Map<String, Any?> = mapOf()
+  ) {
     methodChannel.invokeMethod(method, arguments)
   }
 }

@@ -1,15 +1,20 @@
 package io.github.nullptrx.pangleflutter.delegate
 
 import android.app.Activity
-import io.github.nullptrx.pangleflutter.PangleAdManager
 import io.github.nullptrx.pangleflutter.common.PangleLoadingType
-import io.github.nullptrx.pangleflutter.common.kBlock
 
-internal class FLTRewardedVideoAd(val slotId: String, var target: Activity?, val loadingType: PangleLoadingType, var result: (Any) -> Unit = {}) {
+internal class FLTRewardedVideoAd(
+  val slotId: String,
+  var target: Activity?,
+  val loadingType: PangleLoadingType,
+  var result: (Any) -> Unit = {}
+) {
 
-
-
-  private fun invoke(code: Int = 0, message: String? = null, verify: Boolean = false) {
+  private fun invoke(
+    code: Int = 0,
+    message: String? = null,
+    verify: Boolean = false
+  ) {
     result.apply {
       val args = mutableMapOf<String, Any?>()
       args["code"] = code
@@ -24,7 +29,5 @@ internal class FLTRewardedVideoAd(val slotId: String, var target: Activity?, val
     result = {}
     target = null
   }
-
-
 }
 
