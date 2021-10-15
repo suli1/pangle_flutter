@@ -25,8 +25,15 @@ class PangleAdManager {
 
     get() = field
 
+  private var expressSize : Map<String, Double>? = null;
 
+  fun setExpressSize(map: Map<String, Double>?){
+    expressSize = map;
+  }
 
+  fun getExpressSize(): Map<String, Double>? {
+    return expressSize;
+  }
 
 
   /**

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import com.bytedance.msdk.api.AdError
 import com.bytedance.msdk.api.TTAdSize
 import com.bytedance.msdk.api.TTDislikeCallback
@@ -20,6 +19,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import io.github.nullptrx.pangleflutter.PangleAdManager
+import io.github.nullptrx.pangleflutter.PangleAdManager.Companion.shared
 import io.github.nullptrx.pangleflutter.util.UIUtils
 
 
@@ -35,6 +35,7 @@ class FlutterFeedView(
   private var ttadId: String = ""
   private var  containerFrameLayout : FrameLayout;
   private lateinit var video : View;
+  private  var widthParam : Double? = null;
 
   init {
     methodChannel.setMethodCallHandler(this)
@@ -47,6 +48,10 @@ class FlutterFeedView(
     containerFrameLayout.layoutParams = layoutParams;
     ttNativeAdView.addView(containerFrameLayout);
     ttadId = params["id"] as String
+    val expressArgs: Map<String, Double>? = shared.getExpressSize();
+    if (expressArgs != null) {
+      widthParam = expressArgs["width"]
+    }
     loadAd(ttadId)
   }
 
@@ -122,11 +127,15 @@ class FlutterFeedView(
           val layoutParams = FrameLayout.LayoutParams(sWidth, sHeight)
           containerFrameLayout.removeAllViews()
           containerFrameLayout.addView(video, layoutParams)
-          //postMessage("onSuccessGlobalLayout", mapOf("measuredWidth" to  video.width, "measuredHeight" to video.height))
-
           video.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-              postMessage("onRenderSuccess", mapOf("width" to  video.measuredWidth.toDouble(), "height" to video.measuredHeight.toDouble()))
+              val height: Double
+              if(widthParam != null){
+                height =  video.height * widthParam!! /  video.width;
+              }else{
+                height = video.height.toDouble();
+              }
+              postMessage("onRenderSuccess", mapOf("width" to  video.measuredWidth.toDouble(), "height" to height))
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 ttNativeAdView.viewTreeObserver.removeOnGlobalLayoutListener(this)
               } else {

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
+import io.github.nullptrx.pangleflutter.PangleAdManager;
 import io.github.nullptrx.pangleflutter.common.PangleOrientation;
 import io.github.nullptrx.pangleflutter.util.VideoOptionUtil;
 
@@ -122,6 +123,7 @@ public class TTAdSlotManager {
             }
             builder.setImageAdSize(w.intValue(),h.intValue());// 必选参数 单位dp ，详情见上面备注解释
         }
+        PangleAdManager.Companion.getShared().setExpressSize(expressArgs);
         Integer count =  call.argument("count");
 
         /*
