@@ -24,8 +24,6 @@ import com.bytedance.msdk.api.nativeAd.TTUnifiedNativeAd;
 import com.bytedance.msdk.api.reward.RewardItem;
 import com.bytedance.msdk.api.reward.TTRewardAd;
 import com.bytedance.msdk.api.reward.TTRewardedAdListener;
-import com.bytedance.msdk.api.splash.TTSplashAd;
-import com.bytedance.msdk.api.splash.TTSplashAdLoadCallback;
 import io.flutter.plugin.common.MethodChannel;
 import io.github.nullptrx.pangleflutter.PangleAdManager;
 import io.github.nullptrx.pangleflutter.common.PangleLoadingType;
@@ -210,21 +208,15 @@ public class TTAdManagerHolder {
     String androidId = null;
     try {
       androidId =
-          Settings.System.getString(context.getContentResolver(), Settings.System.ANDROID_ID)
-              + "2222";
+          Settings.System.getString(context.getContentResolver(), Settings.System.ANDROID_ID);
     } catch (Exception e) {
       e.printStackTrace();
     }
     return androidId;
   }
 
-  public static void loadSplashAdV2(TTSplashAd mTTSplashAd, AdSlot adSlot,
-      TTSplashAdLoadCallback listener, int timeout) {
-    mTTSplashAd.loadAd(adSlot, listener, timeout);
-  }
-
-  public static void loadRewardVideoAdV2(@NotNull TTRewardAd mttRewardAd,
-      @Nullable AdSlot rewardAdSlot, final Activity activity, final MethodChannel.Result result) {
+  public static void loadRewardVideoAd(@NotNull TTRewardAd mttRewardAd,
+      final Activity activity, final MethodChannel.Result result) {
 
     final boolean[] verify = { false };
 
@@ -263,7 +255,10 @@ public class TTAdManagerHolder {
         map.put("code", 0);
         map.put("message", "success");
         map.put("verify", true);
-        result.success(map);
+        try {
+          result.success(map);
+        } catch (Exception ignored) {
+        }
       }
 
       /**
@@ -301,7 +296,7 @@ public class TTAdManagerHolder {
     });
   }
 
-  public static void loadInterstitialAdV2(@NotNull final TTInterstitialAd mInterstitialAd,
+  public static void loadInterstitialAd(@NotNull final TTInterstitialAd mInterstitialAd,
       @Nullable AdSlot interstitialAdSlot
       , final Activity mContext, final MethodChannel.Result result) {
     //请求广告，调用插屏广告异步请求接口
@@ -374,7 +369,7 @@ public class TTAdManagerHolder {
     });
   }
 
-  public static void loadFullVideoAdV2(@NotNull final TTFullVideoAd mTTFullVideoAd,
+  public static void loadFullVideoAd(@NotNull final TTFullVideoAd mTTFullVideoAd,
       @Nullable AdSlot fullVideoAdSlot, PangleLoadingType loadingType, final Activity activity,
       final MethodChannel.Result result) {
     if (PangleLoadingType.preload_only == loadingType) {
@@ -403,7 +398,10 @@ public class TTAdManagerHolder {
       mTTFullVideoAd.loadFullAd(fullVideoAdSlot, new TTFullVideoAdLoadCallback() {
         @Override
         public void onFullVideoLoadFail(AdError adError) {
-
+          HashMap<String, Object> map = new HashMap<>();
+          map.put("code", -1);
+          map.put("message", adError.message);
+          result.success(map);
         }
 
         @Override
@@ -421,9 +419,6 @@ public class TTAdManagerHolder {
 
   public static TTFullVideoAdListener listenerFull(final MethodChannel.Result result) {
 
-    final int[] code = { 0 };
-    final String[] message = { "success" };
-
     return new TTFullVideoAdListener() {
 
       @Override
@@ -438,8 +433,7 @@ public class TTAdManagerHolder {
        */
       @Override
       public void onFullVideoAdShowFail(AdError adError) {
-        code[0] = adError.code;
-        message[0] = adError.message;
+
       }
 
       @Override
@@ -449,9 +443,12 @@ public class TTAdManagerHolder {
       @Override
       public void onFullVideoAdClosed() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("code", code[0]);
-        map.put("message", message[0]);
-        result.success(map);
+        map.put("code", 0);
+        map.put("message", "success");
+        try {
+          result.success(map);
+        } catch (Exception ignored) {
+        }
       }
 
       @Override
@@ -472,8 +469,8 @@ public class TTAdManagerHolder {
     };
   }
 
-  public static void loadFeedListAdV2(@NotNull final TTUnifiedNativeAd mTTAdNative,
-      @NotNull AdSlot adSlot, Activity activity, final MethodChannel.Result result) {
+  public static void loadFeedListAd(@NotNull final TTUnifiedNativeAd mTTAdNative,
+      @NotNull AdSlot adSlot, final MethodChannel.Result result) {
 
     mTTAdNative.loadAd(adSlot, new TTNativeAdLoadCallback() {
       @Override
