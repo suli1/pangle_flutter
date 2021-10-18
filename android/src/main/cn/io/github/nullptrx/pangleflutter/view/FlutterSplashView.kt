@@ -31,26 +31,24 @@ class FlutterSplashView(
   private val container: FrameLayout
   private var mTTSplashAd: TTSplashAd? = null
   private var hideSkipButton = false
-  private lateinit var countDownTimer: CountDownTimer
-
-  override fun onFlutterViewDetached() {
-    destroy()
-  }
-
-  private fun destroy() {
-    countDownTimer.cancel()
-    TTMediationAdSdk.unregisterConfigCallback(mSettingConfigCallback)
-    container.removeAllViews()
-    if (mTTSplashAd != null) {
-      mTTSplashAd!!.destroy()
-    }
-    methodChannel.setMethodCallHandler(null)
-  }
+  private var countDownTimer: CountDownTimer? = null
 
   init {
     methodChannel.setMethodCallHandler(this)
     container = FrameLayout(context)
     loadAdWithCallback(params)
+  }
+
+  private fun destroy() {
+    countDownTimer?.cancel()
+    TTMediationAdSdk.unregisterConfigCallback(mSettingConfigCallback)
+    container.removeAllViews()
+    mTTSplashAd?.destroy()
+    methodChannel.setMethodCallHandler(null)
+  }
+
+  override fun onFlutterViewDetached() {
+    destroy()
   }
 
   private fun loadAdByParam(params: Map<String, Any?>) {
@@ -65,7 +63,7 @@ class FlutterSplashView(
       val h: Int = imgArgs["height"] ?: 1920
       val outInfo: Map<String, String> = params["outInfo"]?.asMap() ?: mapOf()
       mTTSplashAd = TTSplashAd(context, slotId)
-      mTTSplashAd!!.setTTAdSplashListener(object : TTSplashAdListener {
+      mTTSplashAd?.setTTAdSplashListener(object : TTSplashAdListener {
         override fun onAdClicked() {
           postMessage("onClick")
         }
@@ -100,21 +98,19 @@ class FlutterSplashView(
         ttNetworkRequestInfo = PangleNetworkRequestInfo(outAppId, outSlotId)
       }
       //step4:请求广告，调用开屏广告异步请求接口，对请求回调的广告作渲染处理
-      mTTSplashAd!!.loadAd(adSlot, ttNetworkRequestInfo, object : TTSplashAdLoadCallback {
+      mTTSplashAd?.loadAd(adSlot, ttNetworkRequestInfo, object : TTSplashAdLoadCallback {
         override fun onSplashAdLoadFail(adError: AdError) {
           postMessage(
             "onError",
             mapOf(
-              "message" to adError.message + " adMessgaeDetail=" + mTTSplashAd!!.adLoadInfoList,
+              "message" to adError.message + " adMessgaeDetail=" + mTTSplashAd?.adLoadInfoList,
               "code" to adError.code
             )
           )
         }
 
         override fun onSplashAdLoadSuccess() {
-          if (mTTSplashAd != null) {
-            mTTSplashAd!!.showAd(container)
-          }
+          mTTSplashAd?.showAd(container)
         }
 
         override fun onAdLoadTimeout() {
@@ -129,7 +125,7 @@ class FlutterSplashView(
         override fun onTick(millisUntilFinished: Long) {
         }
       }
-      countDownTimer.start()
+      countDownTimer?.start()
     }
   }
 
@@ -170,7 +166,7 @@ class FlutterSplashView(
     method: String,
     arguments: Map<String, Any?> = mapOf()
   ) {
-    countDownTimer.cancel()
+    countDownTimer?.cancel()
     methodChannel.invokeMethod(method, arguments)
   }
 }
