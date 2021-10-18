@@ -148,17 +148,11 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val slotId = call.argument<String>("slotId")!!
         val mttRewardAd = TTRewardAd(activity, slotId)
         val rewardAdSlot = TTAdSlotManager.getRewardAdSlot(call);
-        //配置
-        //请求广告
         if (PangleLoadingType.preload_only == loadingType ) {
-          //只是预加载
           mttRewardAd.loadRewardAd(rewardAdSlot, object : TTRewardedAdLoadCallback {
             override fun onRewardVideoLoadFail(adError: AdError) {
               handler.post {
-                val map = HashMap<String, Any>()
-                map["code"] =  adError.code
-                map["message"] = adError.message
-                result.success(map)
+                TTAdManagerHolder.postVerifyMessage(result, adError.code, adError.message, false)
               }
             }
             override fun onRewardVideoAdLoad() {
@@ -171,7 +165,9 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         }else{
           mttRewardAd.loadRewardAd(rewardAdSlot, object : TTRewardedAdLoadCallback {
             override fun onRewardVideoLoadFail(adError: AdError) {
-
+              handler.post {
+                TTAdManagerHolder.postVerifyMessage(result, adError.code, adError.message, false)
+              }
             }
             override fun onRewardVideoAdLoad() {
               TTAdManagerHolder.loadRewardVideoAd(mttRewardAd,activity,result);

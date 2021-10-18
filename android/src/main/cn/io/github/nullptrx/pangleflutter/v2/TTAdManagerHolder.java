@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
-import android.util.Log;
 import com.bytedance.msdk.api.AdError;
 import com.bytedance.msdk.api.AdSlot;
 import com.bytedance.msdk.api.TTAdConfig;
@@ -26,9 +25,9 @@ import com.bytedance.msdk.api.reward.TTRewardAd;
 import com.bytedance.msdk.api.reward.TTRewardedAdListener;
 import io.flutter.plugin.common.MethodChannel;
 import io.github.nullptrx.pangleflutter.PangleAdManager;
+import io.github.nullptrx.pangleflutter.bean.PangleResult;
 import io.github.nullptrx.pangleflutter.common.PangleLoadingType;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
@@ -67,10 +66,6 @@ public class TTAdManagerHolder {
     doInit(context, map, result);
   }
 
-  public static void initUnitySdkBanner(Activity activity) {
-    TTMediationAdSdk.initUnityForBanner(activity);
-  }
-
   //step1:接入网盟广告sdk的初始化操作，详情见接入文档和穿山甲平台说明
   private static void doInit(Context context, Map<String, Object> map,
       MethodChannel.Result result) {
@@ -78,19 +73,12 @@ public class TTAdManagerHolder {
       sInit = true;
       TTAdConfig ttAdConfig = buildConfig(context, map);
       if (ttAdConfig == null) {
-        HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("code", -1);
-        resultMap.put("message", "init error");
-        result.success(resultMap);
+        postSimpleMessage(result, -1, "init error");
         return;
       }
       TTMediationAdSdk.initialize(context, buildConfig(context, map));
     }
-    HashMap<String, Object> resultMap = new HashMap<>();
-    resultMap.put("code", 0);
-    resultMap.put("message", "init success");
-    result.success(resultMap);
-    //Toast.makeText(context,"init",Toast.LENGTH_LONG).show();;
+    postSimpleMessage(result, 0, "init success");
   }
 
   private static TTAdConfig buildConfig(Context context, Map<String, Object> map) {
@@ -218,9 +206,8 @@ public class TTAdManagerHolder {
   public static void loadRewardVideoAd(@NotNull TTRewardAd mttRewardAd,
       final Activity activity, final MethodChannel.Result result) {
 
-    final boolean[] verify = { false };
-
     mttRewardAd.showRewardAd(activity, new TTRewardedAdListener() {
+      boolean isVerify = false;
 
       /**
        * 广告的展示回调 每个广告仅回调一次
@@ -236,7 +223,7 @@ public class TTAdManagerHolder {
        */
       @Override
       public void onRewardedAdShowFail(AdError adError) {
-
+        postVerifyMessage(result, adError.code, adError.message, isVerify);
       }
 
       /**
@@ -244,46 +231,39 @@ public class TTAdManagerHolder {
        */
       @Override
       public void onRewardClick() {
-        Log.d(TAG, "onRewardClick");
       }
 
       /**
        * 广告关闭的回调
        */
       public void onRewardedAdClosed() {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("code", 0);
-        map.put("message", "success");
-        map.put("verify", true);
-        try {
-          result.success(map);
-        } catch (Exception ignored) {
-        }
+        PangleResult pangleResult = new PangleResult();
+        pangleResult.code = 0;
+        pangleResult.message = "success";
+        pangleResult.verify = isVerify;
+        postCustomMessage(result, pangleResult);
       }
 
       /**
        * 视频播放完毕的回调 Admob广告不存在该回调
        */
       public void onVideoComplete() {
-        Log.d(TAG, "onVideoComplete");
       }
 
       /**
        * 1、视频播放失败的回调
        */
       public void onVideoError() {
-        //                HashMap<String, Object> map = new HashMap<>();
-        //                map.put("code",-1);
-        //                map.put("message", "error");
-        //                map.put("verify",false);
-        //                result.success(map);
+        postVerifyMessage(result, -1, "error", isVerify);
       }
 
       /**
        * 激励视频播放完毕，验证是否有效发放奖励的回调
        */
       public void onRewardVerify(RewardItem rewardItem) {
-        verify[0] = true;
+        if (rewardItem != null) {
+          isVerify = rewardItem.rewardVerify();
+        }
       }
 
       /**
@@ -291,7 +271,7 @@ public class TTAdManagerHolder {
        */
       @Override
       public void onSkippedVideo() {
-
+        postVerifyMessage(result, -1, "skip", isVerify);
       }
     });
   }
@@ -299,19 +279,16 @@ public class TTAdManagerHolder {
   public static void loadInterstitialAd(@NotNull final TTInterstitialAd mInterstitialAd,
       @Nullable AdSlot interstitialAdSlot
       , final Activity mContext, final MethodChannel.Result result) {
-    //请求广告，调用插屏广告异步请求接口
     mInterstitialAd.loadAd(interstitialAdSlot, new TTInterstitialAdLoadCallback() {
       @Override
       public void onInterstitialLoadFail(AdError adError) {
+        postSimpleMessage(result, adError.code, adError.message);
       }
 
       @Override
       public void onInterstitialLoad() {
         mInterstitialAd.setTTAdInterstitialListener(new TTInterstitialAdListener() {
 
-          /**
-           * 广告展示
-           */
           @Override
           public void onInterstitialShow() {
           }
@@ -323,11 +300,7 @@ public class TTAdManagerHolder {
            */
           @Override
           public void onInterstitialShowFail(AdError adError) {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("code", adError.code);
-            map.put("message", adError.message);
-            map.put("verify", false);
-            result.success(map);
+            postSimpleMessage(result, adError.code, adError.message);
           }
 
           /**
@@ -373,15 +346,11 @@ public class TTAdManagerHolder {
       @Nullable AdSlot fullVideoAdSlot, PangleLoadingType loadingType, final Activity activity,
       final MethodChannel.Result result) {
     if (PangleLoadingType.preload_only == loadingType) {
-      //只是预加载
       mTTFullVideoAd.loadFullAd(fullVideoAdSlot, new TTFullVideoAdLoadCallback() {
 
         @Override
         public void onFullVideoLoadFail(AdError adError) {
-          HashMap<String, Object> map = new HashMap<>();
-          map.put("code", -1);
-          map.put("message", adError.message + " pro");
-          result.success(map);
+          postSimpleMessage(result, adError.code, adError.message);
         }
 
         @Override
@@ -398,10 +367,7 @@ public class TTAdManagerHolder {
       mTTFullVideoAd.loadFullAd(fullVideoAdSlot, new TTFullVideoAdLoadCallback() {
         @Override
         public void onFullVideoLoadFail(AdError adError) {
-          HashMap<String, Object> map = new HashMap<>();
-          map.put("code", -1);
-          map.put("message", adError.message);
-          result.success(map);
+          postSimpleMessage(result, adError.code, adError.message);
         }
 
         @Override
@@ -433,22 +399,25 @@ public class TTAdManagerHolder {
        */
       @Override
       public void onFullVideoAdShowFail(AdError adError) {
-
+        postSimpleMessage(result, adError.code, adError.message);
       }
 
       @Override
       public void onFullVideoAdClick() {
       }
 
+      /**
+       * 备注：相关回调说明 缺失onFullVideoAdShow()回调的有： 无
+       * 缺失onFullVideoAdClick()回调的有： unity类型广告 缺失onFullVideoAdClosed()回调的有：无
+       * 缺失onVideoComplete()回调的有： admob、baidu类型广告 缺失onVideoError()回调的有：admob、baidu、mintegral类型广告
+       * 缺失onSkippedVideo()回调的有：admob、sigmob、baidu、mintegral、gdt类型广告
+       */
       @Override
       public void onFullVideoAdClosed() {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("code", 0);
-        map.put("message", "success");
-        try {
-          result.success(map);
-        } catch (Exception ignored) {
-        }
+        PangleResult pangleResult = new PangleResult();
+        pangleResult.code = 0;
+        pangleResult.message = "success";
+        postCustomMessage(result, pangleResult);
       }
 
       @Override
@@ -465,6 +434,7 @@ public class TTAdManagerHolder {
 
       @Override
       public void onSkippedVideo() {
+        postSimpleMessage(result, -1, "skip");
       }
     };
   }
@@ -476,30 +446,47 @@ public class TTAdManagerHolder {
       @Override
       public void onAdLoaded(List<TTNativeAd> ads) {
         if (ads == null || ads.isEmpty()) {
-          HashMap<String, Object> map = new HashMap<>();
-          map.put("code", -1);
-          map.put("message", "ads = null");
-          result.success(map);
+          postSimpleMessage(result, -1, "ads = null");
           return;
         }
         ArrayList<String> datas =
             (ArrayList<String>) PangleAdManager.Companion.getShared().setExpressAdV2(ads);
-        //广告加载成功 ads
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("code", 0);
-        map.put("count", ads.size());
-        map.put("data", datas);
-        result.success(map);
+        PangleResult pangleResult = new PangleResult();
+        pangleResult.code = 0;
+        pangleResult.count = ads.size();
+        pangleResult.data = datas;
+        postCustomMessage(result, pangleResult);
       }
 
       @Override
       public void onAdLoadedFial(AdError adError) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("code", adError.code);
-        map.put("message", adError.message);
-        map.put("verify", false);
-        result.success(map);
+        postVerifyMessage(result, adError.code, adError.message, false);
       }
     });
+  }
+
+  public static void postSimpleMessage(MethodChannel.Result result, int code, String message) {
+    PangleResult pangleResult = new PangleResult();
+    pangleResult.code = code;
+    pangleResult.message = message;
+    postCustomMessage(result, pangleResult);
+  }
+
+  public static void postVerifyMessage(MethodChannel.Result result, int code, String message,
+      Boolean isVerify) {
+    PangleResult pangleResult = new PangleResult();
+    pangleResult.code = code;
+    pangleResult.message = message;
+    pangleResult.verify = isVerify;
+    postCustomMessage(result, pangleResult);
+  }
+
+  private static void postCustomMessage(MethodChannel.Result result, PangleResult pangleResult) {
+    if (result != null && pangleResult != null) {
+      try {
+        result.success(pangleResult.toMap());
+      } catch (Exception ignored) {
+      }
+    }
   }
 }

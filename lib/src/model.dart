@@ -32,7 +32,7 @@ import 'dart:ui';
 class PangleAd {
   final int code;
   final String? message;
-  final int count;
+  final int? count;
   final List<String> data;
 
   /// 是否成功
