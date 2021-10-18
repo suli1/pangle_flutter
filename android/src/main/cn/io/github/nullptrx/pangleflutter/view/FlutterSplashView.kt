@@ -31,16 +31,22 @@ class FlutterSplashView(
   private val container: FrameLayout
   private var mTTSplashAd: TTSplashAd? = null
   private var hideSkipButton = false
-  private lateinit var countDownTimer: CountDownTimer
+  private var countDownTimer: CountDownTimer? = null
 
   override fun onFlutterViewDetached() {
     destroy()
   }
 
   private fun destroy() {
-    countDownTimer.cancel()
-    TTMediationAdSdk.unregisterConfigCallback(mSettingConfigCallback)
-    container.removeAllViews()
+    if(countDownTimer != null){
+      countDownTimer!!.cancel()
+    }
+    if(mSettingConfigCallback != null){
+      TTMediationAdSdk.unregisterConfigCallback(mSettingConfigCallback)
+    }
+    if(container != null){
+      container.removeAllViews()
+    }
     if (mTTSplashAd != null) {
       mTTSplashAd!!.destroy()
     }
@@ -129,7 +135,7 @@ class FlutterSplashView(
         override fun onTick(millisUntilFinished: Long) {
         }
       }
-      countDownTimer.start()
+      countDownTimer!!.start()
     }
   }
 
@@ -170,7 +176,9 @@ class FlutterSplashView(
     method: String,
     arguments: Map<String, Any?> = mapOf()
   ) {
-    countDownTimer.cancel()
+    if(countDownTimer != null){
+      countDownTimer!!.cancel()
+    }
     methodChannel.invokeMethod(method, arguments)
   }
 }
