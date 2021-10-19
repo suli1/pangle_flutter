@@ -284,20 +284,28 @@ object TTAdManagerHolder {
         }
 
         override fun onFullVideoAdLoad() {}
-        override fun onFullVideoCached() {}
+        override fun onFullVideoCached() {
+        }
       })
     } else {
+      var isSuccess = false
       mTTFullVideoAd.loadFullAd(fullVideoAdSlot, object : TTFullVideoAdLoadCallback {
         override fun onFullVideoLoadFail(adError: AdError) {
           postSimpleMessage(result, adError.code, adError.message)
         }
 
         override fun onFullVideoAdLoad() {
-          mTTFullVideoAd.showFullAd(activity, listenerFull(result))
+          if (mTTFullVideoAd.isReady && !isSuccess) {
+            isSuccess = true
+            mTTFullVideoAd.showFullAd(activity, listenerFull(result))
+          }
         }
 
         override fun onFullVideoCached() {
-          mTTFullVideoAd.showFullAd(activity, listenerFull(result))
+          if (mTTFullVideoAd.isReady && !isSuccess) {
+            isSuccess = true
+            mTTFullVideoAd.showFullAd(activity, listenerFull(result))
+          }
         }
       })
     }

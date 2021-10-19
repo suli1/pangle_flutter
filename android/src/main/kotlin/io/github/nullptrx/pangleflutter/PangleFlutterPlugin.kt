@@ -4,7 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.widget.Toast
 import com.bytedance.msdk.api.AdError
+import com.bytedance.msdk.api.TTMediationAdSdk
+import com.bytedance.msdk.api.TTSettingConfigCallback
 import com.bytedance.msdk.api.fullVideo.TTFullVideoAd
 import com.bytedance.msdk.api.interstitial.TTInterstitialAd
 import com.bytedance.msdk.api.nativeAd.TTUnifiedNativeAd
@@ -156,6 +160,7 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
             }
           })
         }else{
+          var isSuccess = false
           mttRewardAd.loadRewardAd(rewardAdSlot, object : TTRewardedAdLoadCallback {
             override fun onRewardVideoLoadFail(adError: AdError) {
               handler.post {
@@ -163,10 +168,16 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
               }
             }
             override fun onRewardVideoAdLoad() {
-              TTAdManagerHolder.loadRewardVideoAd(mttRewardAd,activity,result)
+              if(mttRewardAd.isReady && !isSuccess){
+                isSuccess = true
+                TTAdManagerHolder.loadRewardVideoAd(mttRewardAd,activity,result)
+              }
             }
             override fun onRewardVideoCached() {
-              TTAdManagerHolder.loadRewardVideoAd(mttRewardAd,activity,result)
+              if(mttRewardAd.isReady && !isSuccess){
+                isSuccess = true
+                TTAdManagerHolder.loadRewardVideoAd(mttRewardAd,activity,result)
+              }
             }
           })
         }
@@ -213,6 +224,9 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val slotId = call.argument<String>("slotId")!!
         val mTTFullVideoAd = TTFullVideoAd(activity, slotId)
         val fullVideoAdSlot = TTAdSlotManager.getFullVideoAdSlot(call)
+        /**
+         * 判断当前是否存在config 配置 ，如果存在直接加载广告 ，如果不存在则注册config加载回调
+         */
         TTAdManagerHolder.loadFullVideoAd(mTTFullVideoAd,fullVideoAdSlot,loadingType,activity,result)
       }
       "setThemeStatus" -> {
@@ -225,5 +239,4 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
     }
 
   }
-
 }
