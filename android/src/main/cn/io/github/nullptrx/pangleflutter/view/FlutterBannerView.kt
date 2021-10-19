@@ -52,7 +52,7 @@ class FlutterBannerView(
       val h: Float = expressArgs.getValue("height").toFloat()
 
       //step4:创建广告请求参数AdSlot,具体参数含义参考文档
-      var adSlot: AdSlot? = AdSlot.Builder()
+      val adSlot: AdSlot? = AdSlot.Builder()
         .setAdStyleType(AdSlot.TYPE_EXPRESS_AD) // banner暂时只支持模版类型，必须手动设置为AdSlot.TYPE_EXPRESS_AD
         //                .setBannerSize(TTAdSize.BANNER_300_250)
         .setBannerSize(TTAdSize.BANNER_CUSTOME) // 使用TTAdSize.BANNER_CUSTOME可以调用setImageAdSize设置大小

@@ -18,7 +18,6 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
-import io.github.nullptrx.pangleflutter.PangleAdManager
 import io.github.nullptrx.pangleflutter.PangleAdManager.Companion.shared
 import io.github.nullptrx.pangleflutter.util.UIUtils
 
@@ -68,7 +67,7 @@ class FlutterFeedView(
   }
 
   private fun loadAd(id: String) {
-    val ad = PangleAdManager.shared.getExpressAdV2(id) ?: return
+    val ad = shared.getExpressAdV2(id) ?: return
 
     //判断是否存在dislike按钮
     if (ad.hasDislike()) {
