@@ -9,7 +9,7 @@ class PangleAdManager {
     val shared = PangleAdManager()
   }
 
-  private val expressAdCollec1tionV2 =
+  private val expressAdCollectionV2 =
     Collections.synchronizedMap(mutableMapOf<String, TTNativeAd>())
 
   private var expressSize: Map<String, Double>? = null
@@ -29,19 +29,19 @@ class PangleAdManager {
     val data = mutableListOf<String>()
     ttBannerAds.forEach {
       val key = it.hashCode().toString()
-      expressAdCollec1tionV2[key] = it
+      expressAdCollectionV2[key] = it
       data.add(key)
     }
     return data
   }
 
   fun getExpressAdV2(key: String): TTNativeAd? {
-    return expressAdCollec1tionV2[key]
+    return expressAdCollectionV2[key]
   }
 
   fun removeExpressAdV2(key: String): Boolean {
-    if (expressAdCollec1tionV2.containsKey(key)) {
-      val it = expressAdCollec1tionV2.remove(key)
+    if (expressAdCollectionV2.containsKey(key)) {
+      val it = expressAdCollectionV2.remove(key)
       it?.destroy()
       return true
     }

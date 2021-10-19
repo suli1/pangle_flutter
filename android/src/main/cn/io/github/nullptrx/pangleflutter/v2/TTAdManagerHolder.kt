@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager.NameNotFoundException
+import android.provider.Settings
 import android.provider.Settings.System
 import com.bytedance.msdk.api.AdError
 import com.bytedance.msdk.api.AdSlot
@@ -141,10 +142,10 @@ object TTAdManagerHolder {
     return null
   }
 
-  fun getAndroidId(context: Context): String? {
+  private fun getAndroidId(context: Context): String? {
     var androidId: String? = null
     try {
-      androidId = System.getString(context.contentResolver, System.ANDROID_ID)
+      androidId = System.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     } catch (e: Exception) {
       e.printStackTrace()
     }
@@ -162,7 +163,9 @@ object TTAdManagerHolder {
       /**
        * 广告的展示回调 每个广告仅回调一次
        */
-      override fun onRewardedAdShow() {}
+      override fun onRewardedAdShow() {
+//        Log.d("pangle", "onRewardedAdShow")
+      }
 
       /**
        * show失败回调。如果show时发现无可用广告（比如广告过期或者isReady=false），会触发该回调。
@@ -170,6 +173,7 @@ object TTAdManagerHolder {
        * @param adError showFail的具体原因
        */
       override fun onRewardedAdShowFail(adError: AdError) {
+//        Log.d("pangle", "onRewardedAdShowFail:$adError")
         postVerifyMessage(result, adError.code, adError.message, isVerify)
       }
 
@@ -182,6 +186,7 @@ object TTAdManagerHolder {
        * 广告关闭的回调
        */
       override fun onRewardedAdClosed() {
+//        Log.d("pangle", "onRewardedAdClosed")
         val pangleResult = PangleResult()
         pangleResult.code = 0
         pangleResult.message = "success"
@@ -198,6 +203,7 @@ object TTAdManagerHolder {
        * 1、视频播放失败的回调
        */
       override fun onVideoError() {
+//        Log.d("pangle", "onVideoError")
         postVerifyMessage(result, -1, "error", isVerify)
       }
 
@@ -205,15 +211,15 @@ object TTAdManagerHolder {
        * 激励视频播放完毕，验证是否有效发放奖励的回调
        */
       override fun onRewardVerify(rewardItem: RewardItem) {
-        if (rewardItem != null) {
-          isVerify = rewardItem.rewardVerify()
-        }
+//        Log.d("pangle", "onRewardVerify")
+        isVerify = rewardItem.rewardVerify()
       }
 
       /**
        * - Mintegral GDT Admob广告不存在该回调
        */
       override fun onSkippedVideo() {
+//        Log.d("pangle", "onSkippedVideo")
         postVerifyMessage(result, -1, "skip", isVerify)
       }
     })
@@ -289,15 +295,19 @@ object TTAdManagerHolder {
     } else {
       mTTFullVideoAd.loadFullAd(fullVideoAdSlot, object : TTFullVideoAdLoadCallback {
         override fun onFullVideoLoadFail(adError: AdError) {
+//          Log.d("pangle", "onFullVideoLoadFail:$adError")
           postSimpleMessage(result, adError.code, adError.message)
         }
 
         override fun onFullVideoAdLoad() {
-          mTTFullVideoAd.showFullAd(activity, listenerFull(result))
+//          Log.d("pangle", "onFullVideoAdLoad")
         }
 
         override fun onFullVideoCached() {
-          mTTFullVideoAd.showFullAd(activity, listenerFull(result))
+//          Log.d("pangle", "onFullVideoCached")
+          if (mTTFullVideoAd.isReady) {
+            mTTFullVideoAd.showFullAd(activity, listenerFull(result))
+          }
         }
       })
     }
@@ -350,7 +360,7 @@ object TTAdManagerHolder {
   ) {
     mTTAdNative.loadAd(adSlot, object : TTNativeAdLoadCallback {
       override fun onAdLoaded(ads: List<TTNativeAd>) {
-        if (ads == null || ads.isEmpty()) {
+        if (ads.isEmpty()) {
           postSimpleMessage(result, -1, "ads = null")
           return
         }

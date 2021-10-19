@@ -67,7 +67,6 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
     activity = null
   }
 
-
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     binding.binaryMessenger
 
@@ -105,8 +104,6 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
     methodChannel = null
   }
 
-
-
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
 
     activity ?: return
@@ -115,7 +112,7 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
 
       }
       "init" -> {
-        TTAdManagerHolder.init(activity!!,call.arguments.asMap() ?: mapOf(),result)
+        TTAdManagerHolder.init(activity!!, call.arguments.asMap() ?: mapOf(), result)
       }
 
       "requestPermissionIfNecessary" -> {
@@ -141,32 +138,39 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val slotId = call.argument<String>("slotId")!!
         val mttRewardAd = TTRewardAd(activity, slotId)
         val rewardAdSlot = TTAdSlotManager.getRewardAdSlot(call)
-        if (PangleLoadingType.preload_only == loadingType ) {
+        if (PangleLoadingType.preload_only == loadingType) {
           mttRewardAd.loadRewardAd(rewardAdSlot, object : TTRewardedAdLoadCallback {
             override fun onRewardVideoLoadFail(adError: AdError) {
               handler.post {
                 MessageUtils.postVerifyMessage(result, adError.code, adError.message, false)
               }
             }
+
             override fun onRewardVideoAdLoad() {
 
             }
+
             override fun onRewardVideoCached() {
 
             }
           })
-        }else{
+        } else {
           mttRewardAd.loadRewardAd(rewardAdSlot, object : TTRewardedAdLoadCallback {
             override fun onRewardVideoLoadFail(adError: AdError) {
               handler.post {
                 MessageUtils.postVerifyMessage(result, adError.code, adError.message, false)
               }
             }
+
             override fun onRewardVideoAdLoad() {
-              TTAdManagerHolder.loadRewardVideoAd(mttRewardAd,activity,result)
+//              Log.d("pangle", "onRewardVideoAdLoad")
             }
+
             override fun onRewardVideoCached() {
-              TTAdManagerHolder.loadRewardVideoAd(mttRewardAd,activity,result)
+//              Log.d("pangle", "onRewardVideoCached")
+              if (mttRewardAd.isReady) {
+                TTAdManagerHolder.loadRewardVideoAd(mttRewardAd, activity, result)
+              }
             }
           })
         }
@@ -181,7 +185,7 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val mTTAdNative = TTUnifiedNativeAd(activity, slotId) //模板视频
         val adSlot =
           TTAdSlotManager.getFeedListAdSlot(call)
-        TTAdManagerHolder.loadFeedListAd(mTTAdNative,adSlot,result)
+        TTAdManagerHolder.loadFeedListAd(mTTAdNative, adSlot, result)
       }
 
       "removeFeedAd" -> {
@@ -202,9 +206,9 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val expressArgs = call.argument<Map<String, Double>>("expressSize") ?: mapOf()
         val w: Float = expressArgs.getValue("width").toFloat()
         val h: Float = expressArgs.getValue("height").toFloat()
-        val mInterstitialAd = TTInterstitialAd(activity,slotId)
-        val interstitialAdSlot = TTAdSlotManager.getInterstitialAdAdSlot(w,h,isSupportDeepLink)
-        TTAdManagerHolder.loadInterstitialAd(mInterstitialAd,interstitialAdSlot,activity,result)
+        val mInterstitialAd = TTInterstitialAd(activity, slotId)
+        val interstitialAdSlot = TTAdSlotManager.getInterstitialAdAdSlot(w, h, isSupportDeepLink)
+        TTAdManagerHolder.loadInterstitialAd(mInterstitialAd, interstitialAdSlot, activity, result)
       }
 
       "loadFullscreenVideoAd" -> {
@@ -213,7 +217,13 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val slotId = call.argument<String>("slotId")!!
         val mTTFullVideoAd = TTFullVideoAd(activity, slotId)
         val fullVideoAdSlot = TTAdSlotManager.getFullVideoAdSlot(call)
-        TTAdManagerHolder.loadFullVideoAd(mTTFullVideoAd,fullVideoAdSlot,loadingType,activity,result)
+        TTAdManagerHolder.loadFullVideoAd(
+          mTTFullVideoAd,
+          fullVideoAdSlot,
+          loadingType,
+          activity,
+          result
+        )
       }
       "setThemeStatus" -> {
 

@@ -4,7 +4,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.github.nullptrx.pangleflutter.bean.PangleResult
 
 object MessageUtils {
-  @JvmStatic fun postSimpleMessage(
+  fun postSimpleMessage(
     result: Result?,
     code: Int,
     message: String?
@@ -15,7 +15,7 @@ object MessageUtils {
     postCustomMessage(result, pangleResult)
   }
 
-  @JvmStatic fun postVerifyMessage(
+  fun postVerifyMessage(
     result: Result?,
     code: Int,
     message: String?,
@@ -28,14 +28,15 @@ object MessageUtils {
     postCustomMessage(result, pangleResult)
   }
 
-  @JvmStatic fun postCustomMessage(
+  fun postCustomMessage(
     result: Result?,
     pangleResult: PangleResult?
   ) {
     if (result != null && pangleResult != null) {
       try {
         result.success(pangleResult.toMap())
-      } catch (ignored: Exception) {
+      } catch (e: Exception) {
+//        Log.e("pangle", "post message failed:${pangleResult.toMap()}, $e")
       }
     }
   }

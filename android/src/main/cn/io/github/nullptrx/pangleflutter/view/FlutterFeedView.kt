@@ -2,7 +2,6 @@ package io.github.nullptrx.pangleflutter.view
 
 import android.app.Activity
 import android.content.Context
-import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -33,7 +32,7 @@ class FlutterFeedView(
   private val ttNativeAdView: TTNativeAdView
   private var ttadId: String = ""
   private var containerFrameLayout: FrameLayout
-  private lateinit var video: View
+  private var video: View? = null
   private var widthParam: Double? = null
 
   init {
@@ -111,19 +110,15 @@ class FlutterFeedView(
         postMessage("onError", mapOf("message" to msg, "code" to code))
       }
 
-      // ** 注意点 ** 不要在广告加载成功回调里进行广告view展示，要在onRenderSucces进行广告view展示，否则会导致广告无法展示。
+      // ** 注意点 ** 不要在广告加载成功回调里进行广告view展示，要在onRenderSuccess进行广告view展示，否则会导致广告无法展示。
       override fun onRenderSuccess(
         width: Float,
         height: Float
       ) {
-        //回调渲染成功后将模板布局添加的父View中
-        //获取视频播放view,该view SDK内部渲染，在媒体平台可配置视频是否自动播放等设置。
+        // 回调渲染成功后将模板布局添加的父View中
+        // 获取视频播放view,该view SDK内部渲染，在媒体平台可配置视频是否自动播放等设置。
         val sWidth: Int
         val sHeight: Int
-        /**
-         * 如果存在父布局，需要先从父布局中移除
-         */
-        video = ad.expressView // 获取广告view  如果存在父布局，需要先从父布局中移除
         if (width == TTAdSize.FULL_WIDTH.toFloat() && height == TTAdSize.AUTO_HEIGHT.toFloat()) {
           sWidth = FrameLayout.LayoutParams.MATCH_PARENT
           sHeight = WRAP_CONTENT
@@ -131,32 +126,28 @@ class FlutterFeedView(
           sWidth = UIUtils.getScreenWidth(activity)
           sHeight = (sWidth * height / width).toInt()
         }
+
+        // 获取广告view  如果存在父布局，需要先从父布局中移除
+        video = ad.expressView
         if (video != null) {
-          /**
-           * 如果存在父布局，需要先从父布局中移除
-           */
-          UIUtils.removeFromParent(video)
+          val videoView = video!!
+          UIUtils.removeFromParent(videoView)
           val layoutParams = FrameLayout.LayoutParams(sWidth, sHeight)
           containerFrameLayout.removeAllViews()
-          containerFrameLayout.addView(video, layoutParams)
-          video.viewTreeObserver.addOnGlobalLayoutListener(object :
+          containerFrameLayout.addView(videoView, layoutParams)
+          videoView.viewTreeObserver.addOnGlobalLayoutListener(object :
             ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-              val height: Double
-              if (widthParam != null) {
-                height = video.measuredHeight * widthParam!! / video.measuredWidth
+              val measuredHeight: Double = if (widthParam != null) {
+                videoView.measuredHeight * widthParam!! / videoView.measuredWidth
               } else {
-                height = video.measuredHeight.toDouble()
+                videoView.measuredHeight.toDouble()
               }
               postMessage(
                 "onRenderSuccess",
-                mapOf("width" to video.measuredWidth.toDouble(), "height" to height)
+                mapOf("width" to videoView.measuredWidth.toDouble(), "height" to measuredHeight)
               )
-              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                ttNativeAdView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-              } else {
-                ttNativeAdView.viewTreeObserver.removeGlobalOnLayoutListener(this)
-              }
+              ttNativeAdView.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
           })
         }
