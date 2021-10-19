@@ -180,7 +180,7 @@ class _FeedExpressPageState extends State<FeedExpressPage> {
     }
 
     final itemPositions = [5, 10, 15];
-    for (var i = 0; i < feedAd.count; i++) {
+    for (var i = 0; i < (feedAd.count ?? 0); i++) {
       int index = itemPositions.removeAt(0);
       final item = Item(isAd: true, feedId: feedAd.data[i]);
       data.insert(index, item);
@@ -243,7 +243,7 @@ class _FeedExpressPageState extends State<FeedExpressPage> {
         // slotId: kFeedId,
       ),
     );
-    if (feedAd.count > 0) {
+    if (feedAd.count != null && feedAd.count! > 0) {
       if (feedDialogIds.isNotEmpty) {
         pangle.removeFeedAd(feedDialogIds);
       }

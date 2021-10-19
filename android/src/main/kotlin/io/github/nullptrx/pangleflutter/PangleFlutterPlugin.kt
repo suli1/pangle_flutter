@@ -15,8 +15,8 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.PluginRegistry.Registrar
 import io.github.nullptrx.pangleflutter.common.PangleLoadingType
+import io.github.nullptrx.pangleflutter.util.MessageUtils
 import io.github.nullptrx.pangleflutter.util.asMap
 import io.github.nullptrx.pangleflutter.v2.TTAdManagerHolder
 import io.github.nullptrx.pangleflutter.v2.TTAdSlotManager
@@ -149,17 +149,11 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val slotId = call.argument<String>("slotId")!!
         val mttRewardAd = TTRewardAd(activity, slotId)
         val rewardAdSlot = TTAdSlotManager.getRewardAdSlot(call);
-        //配置
-        //请求广告
         if (PangleLoadingType.preload_only == loadingType ) {
-          //只是预加载
           mttRewardAd.loadRewardAd(rewardAdSlot, object : TTRewardedAdLoadCallback {
             override fun onRewardVideoLoadFail(adError: AdError) {
               handler.post {
-                val map = HashMap<String, Any>()
-                map["code"] =  adError.code
-                map["message"] = adError.message
-                result.success(map)
+                MessageUtils.postVerifyMessage(result, adError.code, adError.message, false)
               }
             }
             override fun onRewardVideoAdLoad() {
@@ -172,13 +166,15 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         }else{
           mttRewardAd.loadRewardAd(rewardAdSlot, object : TTRewardedAdLoadCallback {
             override fun onRewardVideoLoadFail(adError: AdError) {
-
+              handler.post {
+                MessageUtils.postVerifyMessage(result, adError.code, adError.message, false)
+              }
             }
             override fun onRewardVideoAdLoad() {
-              TTAdManagerHolder.loadRewardVideoAdV2(mttRewardAd,rewardAdSlot,activity,result);
+              TTAdManagerHolder.loadRewardVideoAd(mttRewardAd,activity,result);
             }
             override fun onRewardVideoCached() {
-              TTAdManagerHolder.loadRewardVideoAdV2(mttRewardAd,rewardAdSlot,activity,result);
+              TTAdManagerHolder.loadRewardVideoAd(mttRewardAd,activity,result);
             }
           })
         }
@@ -193,7 +189,7 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         var mTTAdNative = TTUnifiedNativeAd(activity, slotId) //模板视频
         val adSlot =
           TTAdSlotManager.getFeedListAdSlot(call)
-        TTAdManagerHolder.loadFeedListAdV2(mTTAdNative,adSlot,activity,result);
+        TTAdManagerHolder.loadFeedListAd(mTTAdNative,adSlot,result);
       }
 
       "removeFeedAd" -> {
@@ -216,7 +212,7 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val h: Float = expressArgs.getValue("height").toFloat()
         val mInterstitialAd = TTInterstitialAd(activity,slotId)
         val interstitialAdSlot = TTAdSlotManager.getInterstitialAdAdSlot(w,h,isSupportDeepLink);
-        TTAdManagerHolder.loadInterstitialAdV2(mInterstitialAd,interstitialAdSlot,activity,result);
+        TTAdManagerHolder.loadInterstitialAd(mInterstitialAd,interstitialAdSlot,activity,result);
       }
 
       "loadFullscreenVideoAd" -> {
@@ -225,7 +221,7 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
         val slotId = call.argument<String>("slotId")!!
         val mTTFullVideoAd = TTFullVideoAd(activity, slotId)
         val fullVideoAdSlot = TTAdSlotManager.getFullVideoAdSlot(call);
-        TTAdManagerHolder.loadFullVideoAdV2(mTTFullVideoAd,fullVideoAdSlot,loadingType,activity,result);
+        TTAdManagerHolder.loadFullVideoAd(mTTFullVideoAd,fullVideoAdSlot,loadingType,activity,result);
       }
       "setThemeStatus" -> {
 
