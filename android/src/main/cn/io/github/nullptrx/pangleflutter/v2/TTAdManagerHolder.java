@@ -27,6 +27,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.github.nullptrx.pangleflutter.PangleAdManager;
 import io.github.nullptrx.pangleflutter.bean.PangleResult;
 import io.github.nullptrx.pangleflutter.common.PangleLoadingType;
+import io.github.nullptrx.pangleflutter.util.MessageUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -73,12 +74,12 @@ public class TTAdManagerHolder {
       sInit = true;
       TTAdConfig ttAdConfig = buildConfig(context, map);
       if (ttAdConfig == null) {
-        postSimpleMessage(result, -1, "init error");
+        MessageUtils.postSimpleMessage(result, -1, "init error");
         return;
       }
       TTMediationAdSdk.initialize(context, buildConfig(context, map));
     }
-    postSimpleMessage(result, 0, "init success");
+    MessageUtils.postSimpleMessage(result, 0, "init success");
   }
 
   private static TTAdConfig buildConfig(Context context, Map<String, Object> map) {
@@ -223,7 +224,7 @@ public class TTAdManagerHolder {
        */
       @Override
       public void onRewardedAdShowFail(AdError adError) {
-        postVerifyMessage(result, adError.code, adError.message, isVerify);
+        MessageUtils.postVerifyMessage(result, adError.code, adError.message, isVerify);
       }
 
       /**
@@ -241,7 +242,7 @@ public class TTAdManagerHolder {
         pangleResult.code = 0;
         pangleResult.message = "success";
         pangleResult.verify = isVerify;
-        postCustomMessage(result, pangleResult);
+        MessageUtils.postCustomMessage(result, pangleResult);
       }
 
       /**
@@ -254,7 +255,7 @@ public class TTAdManagerHolder {
        * 1、视频播放失败的回调
        */
       public void onVideoError() {
-        postVerifyMessage(result, -1, "error", isVerify);
+        MessageUtils.postVerifyMessage(result, -1, "error", isVerify);
       }
 
       /**
@@ -271,7 +272,7 @@ public class TTAdManagerHolder {
        */
       @Override
       public void onSkippedVideo() {
-        postVerifyMessage(result, -1, "skip", isVerify);
+        MessageUtils.postVerifyMessage(result, -1, "skip", isVerify);
       }
     });
   }
@@ -282,7 +283,7 @@ public class TTAdManagerHolder {
     mInterstitialAd.loadAd(interstitialAdSlot, new TTInterstitialAdLoadCallback() {
       @Override
       public void onInterstitialLoadFail(AdError adError) {
-        postSimpleMessage(result, adError.code, adError.message);
+        MessageUtils.postSimpleMessage(result, adError.code, adError.message);
       }
 
       @Override
@@ -300,7 +301,7 @@ public class TTAdManagerHolder {
            */
           @Override
           public void onInterstitialShowFail(AdError adError) {
-            postSimpleMessage(result, adError.code, adError.message);
+            MessageUtils.postSimpleMessage(result, adError.code, adError.message);
           }
 
           /**
@@ -350,7 +351,7 @@ public class TTAdManagerHolder {
 
         @Override
         public void onFullVideoLoadFail(AdError adError) {
-          postSimpleMessage(result, adError.code, adError.message);
+          MessageUtils.postSimpleMessage(result, adError.code, adError.message);
         }
 
         @Override
@@ -367,7 +368,7 @@ public class TTAdManagerHolder {
       mTTFullVideoAd.loadFullAd(fullVideoAdSlot, new TTFullVideoAdLoadCallback() {
         @Override
         public void onFullVideoLoadFail(AdError adError) {
-          postSimpleMessage(result, adError.code, adError.message);
+          MessageUtils.postSimpleMessage(result, adError.code, adError.message);
         }
 
         @Override
@@ -399,7 +400,7 @@ public class TTAdManagerHolder {
        */
       @Override
       public void onFullVideoAdShowFail(AdError adError) {
-        postSimpleMessage(result, adError.code, adError.message);
+        MessageUtils.postSimpleMessage(result, adError.code, adError.message);
       }
 
       @Override
@@ -417,7 +418,7 @@ public class TTAdManagerHolder {
         PangleResult pangleResult = new PangleResult();
         pangleResult.code = 0;
         pangleResult.message = "success";
-        postCustomMessage(result, pangleResult);
+        MessageUtils.postCustomMessage(result, pangleResult);
       }
 
       @Override
@@ -434,7 +435,7 @@ public class TTAdManagerHolder {
 
       @Override
       public void onSkippedVideo() {
-        postSimpleMessage(result, -1, "skip");
+        MessageUtils.postSimpleMessage(result, -1, "skip");
       }
     };
   }
@@ -446,7 +447,7 @@ public class TTAdManagerHolder {
       @Override
       public void onAdLoaded(List<TTNativeAd> ads) {
         if (ads == null || ads.isEmpty()) {
-          postSimpleMessage(result, -1, "ads = null");
+          MessageUtils.postSimpleMessage(result, -1, "ads = null");
           return;
         }
         ArrayList<String> datas =
@@ -455,38 +456,13 @@ public class TTAdManagerHolder {
         pangleResult.code = 0;
         pangleResult.count = ads.size();
         pangleResult.data = datas;
-        postCustomMessage(result, pangleResult);
+        MessageUtils.postCustomMessage(result, pangleResult);
       }
 
       @Override
       public void onAdLoadedFial(AdError adError) {
-        postVerifyMessage(result, adError.code, adError.message, false);
+        MessageUtils.postVerifyMessage(result, adError.code, adError.message, false);
       }
     });
-  }
-
-  public static void postSimpleMessage(MethodChannel.Result result, int code, String message) {
-    PangleResult pangleResult = new PangleResult();
-    pangleResult.code = code;
-    pangleResult.message = message;
-    postCustomMessage(result, pangleResult);
-  }
-
-  public static void postVerifyMessage(MethodChannel.Result result, int code, String message,
-      Boolean isVerify) {
-    PangleResult pangleResult = new PangleResult();
-    pangleResult.code = code;
-    pangleResult.message = message;
-    pangleResult.verify = isVerify;
-    postCustomMessage(result, pangleResult);
-  }
-
-  private static void postCustomMessage(MethodChannel.Result result, PangleResult pangleResult) {
-    if (result != null && pangleResult != null) {
-      try {
-        result.success(pangleResult.toMap());
-      } catch (Exception ignored) {
-      }
-    }
   }
 }

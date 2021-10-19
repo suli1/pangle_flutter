@@ -16,6 +16,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.github.nullptrx.pangleflutter.common.PangleLoadingType
+import io.github.nullptrx.pangleflutter.util.MessageUtils
 import io.github.nullptrx.pangleflutter.util.asMap
 import io.github.nullptrx.pangleflutter.v2.TTAdManagerHolder
 import io.github.nullptrx.pangleflutter.v2.TTAdSlotManager
@@ -152,7 +153,7 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
           mttRewardAd.loadRewardAd(rewardAdSlot, object : TTRewardedAdLoadCallback {
             override fun onRewardVideoLoadFail(adError: AdError) {
               handler.post {
-                TTAdManagerHolder.postVerifyMessage(result, adError.code, adError.message, false)
+                MessageUtils.postVerifyMessage(result, adError.code, adError.message, false)
               }
             }
             override fun onRewardVideoAdLoad() {
@@ -166,7 +167,7 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
           mttRewardAd.loadRewardAd(rewardAdSlot, object : TTRewardedAdLoadCallback {
             override fun onRewardVideoLoadFail(adError: AdError) {
               handler.post {
-                TTAdManagerHolder.postVerifyMessage(result, adError.code, adError.message, false)
+                MessageUtils.postVerifyMessage(result, adError.code, adError.message, false)
               }
             }
             override fun onRewardVideoAdLoad() {
