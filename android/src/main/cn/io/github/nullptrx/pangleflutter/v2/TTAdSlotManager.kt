@@ -45,7 +45,7 @@ object TTAdSlotManager {
 
   fun getRewardAdSlot(call: MethodCall): AdSlot {
     val videoOption = TTVideoOption.Builder()
-      .setMuted(true) //对所有SDK的激励广告生效，除需要在平台配置的SDK，如穿山甲SDK
+      .setMuted(false) //对所有SDK的激励广告生效，除需要在平台配置的SDK，如穿山甲SDK
       .setAdmobAppVolume(0.5f) //配合Admob的声音大小设置[0-1]
       .build()
     val builder =
