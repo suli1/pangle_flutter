@@ -9,19 +9,19 @@ import io.flutter.plugin.platform.PlatformViewFactory
 import io.github.nullptrx.pangleflutter.util.asMap
 import java.lang.ref.WeakReference
 
-class SplashViewFactory(val messenger: BinaryMessenger) :
+class SplashViewFactory(private val messenger: BinaryMessenger) :
   PlatformViewFactory(StandardMessageCodec.INSTANCE) {
 
   private var activity: WeakReference<Activity>? = null
 
   override fun create(
-    context: Context,
+    context: Context?,
     id: Int,
     args: Any?
-  ): PlatformView? {
+  ): PlatformView {
     val params = args?.asMap<String, Any?>() ?: mutableMapOf()
-    val act = activity?.get() ?: return null
-    return FlutterSplashView(act, messenger, id, params)
+    val act = activity?.get()
+    return FlutterSplashView(act!!, messenger, id, params)
   }
 
   fun attachActivity(activity: Activity) {

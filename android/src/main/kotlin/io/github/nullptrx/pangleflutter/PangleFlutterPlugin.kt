@@ -78,18 +78,18 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
     bannerViewFactory = BannerViewFactory(binding.binaryMessenger)
     binding.platformViewRegistry.registerViewFactory(
       "nullptrx.github.io/pangle_bannerview",
-      bannerViewFactory
+      bannerViewFactory!!
     )
     feedViewFactory = FeedViewFactory(binding.binaryMessenger)
     binding.platformViewRegistry.registerViewFactory(
       "nullptrx.github.io/pangle_feedview",
-      feedViewFactory
+      feedViewFactory!!
     )
 
     splashViewFactory = SplashViewFactory(binding.binaryMessenger)
     binding.platformViewRegistry.registerViewFactory(
       "nullptrx.github.io/pangle_splashview",
-      splashViewFactory
+      splashViewFactory!!
     )
 
     val nativeBannerViewFactory = NativeBannerViewFactory(binding.binaryMessenger)
@@ -191,10 +191,12 @@ class PangleFlutterPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
       "removeFeedAd" -> {
         val feedIds = call.arguments<List<String>>()
         var count = 0
-        for (feedId in feedIds) {
-          val success = PangleAdManager.shared.removeExpressAdV2(feedId)
-          if (success) {
-            count++
+        if (feedIds != null) {
+          for (feedId in feedIds) {
+            val success = PangleAdManager.shared.removeExpressAdV2(feedId)
+            if (success) {
+              count++
+            }
           }
         }
         result.success(count)
